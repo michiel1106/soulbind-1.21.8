@@ -13,12 +13,51 @@ public class SoulBind implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+
+
+	// also idk if you know this already but heres a short explanation of what public, static, private, final and void mean.
+
+	/*
+	public means that a class outside of this one can access it. Right now I can go to ModItems and use the LOGGER variable because its public. if it was private I would not be able to use it.
+
+	static means that theres only one. Take health for example. If the health variable in pigs was static, then every pig would have the same health, but its not, so each pig can have their own health value.
+	you can still make it public though, so if it was public, you could take the pig entity:
+
+	PigEntity pig = new PigEntity();
+
+	pig.health = 0;
+
+	and change their health!
+
+	Next up is final. Final means that you cant change it. Whatever it is assigned is unchangable.
+	You cannot do
+
+	LOGGER = LoggerFactory.getLogger("bindsoul")
+
+	because its final.
+
+	then theres void. functions, or methods, I kind of use them interchangably, can return something. below example:
+
+	 */
+
+	public String thisreturnsastring() {
+		return "tada";
+	}
+
+	/*
+	the String argument can be changed to anything. You can change it to SoulToken and make it return the item.
+	what void does is basically say, "this returns nothing". which is good for the initialize class because you dont need to return anything.
+	its just meant to execute more pieces of code.
+
+	 */
+
+
+
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		// btw if you already know stuff from the comments or have read them then you can delete them and commit to the repo, github keeps a history of everything anyway so they wouldnt be completely gone.
+
+		LOGGER.info("Starting Soulbind Mod!");
 	}
 }
