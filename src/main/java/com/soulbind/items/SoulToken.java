@@ -55,14 +55,14 @@ public class SoulToken extends Item {
         if (entity instanceof PlayerEntity player) {
 
             // you can also take away the player after PlayerEntity, what player does is exposing the variable. you can do the same by casting.
-            System.out.println("A player is holding this item! their name is " + player.getName().getString());
+            //System.out.println("A player is holding this item! their name is " + player.getName().getString());
         }
 
         // casting example:
 
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            System.out.println("a player is holding this item: " + player.getName());
+            //System.out.println("a player is holding this item: " + player.getName());
             // casting is usually not really preferred though so I wouldnt recommend using it. just putting a variable after PlayerEntity is way better.
 
         }

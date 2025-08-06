@@ -1,57 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "item/generated",
   "textures": {
     "layer0": "soulbind:item/soul_token"
-  },
-  "display": {
-    "thirdperson_righthand": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "thirdperson_lefthand": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "firstperson_righthand": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "firstperson_lefthand": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "gui": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "ground": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    },
-    "fixed": {
-      "scale": [
-        0.75,
-        0.75,
-        0.75
-      ]
-    }
   }
 }
