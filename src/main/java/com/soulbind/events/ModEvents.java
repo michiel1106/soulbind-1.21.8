@@ -1,6 +1,13 @@
 package com.soulbind.events;
 
+import com.soulbind.items.ModItems;
+import com.soulbind.util.ModUtils;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -40,6 +47,18 @@ public class ModEvents {
 
             // we can even make our own events. for example when the player receives damage, theyre really nice.
         }));
+
+
+        ServerPlayerEvents.JOIN.register((player -> {
+            if (!ModUtils.HasAlreadyJoined(player)) {
+
+
+                ModUtils.GivePlayerItem(player);
+            }
+
+        }));
+
+
     }
 
 

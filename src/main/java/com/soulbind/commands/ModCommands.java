@@ -7,7 +7,10 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+
+import java.util.Locale;
 
 public class ModCommands {
     // commands are registered through events and are basically one long line of code.
@@ -55,6 +58,29 @@ public class ModCommands {
                                 }))))));
 
 
+
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("setjoined")
+                .then(CommandManager.argument("player", EntityArgumentType.player())
+                        .then(CommandManager.argument("true/false", StringArgumentType.string())
+                                .executes(commandContext -> {
+                                    ServerPlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
+                                    String value = StringArgumentType.getString(commandContext, "true/false");
+
+                                    if (value.toLowerCase(Locale.ENGLISH).equals("true")) {
+                                        ModUtils.SetJoinedAlready(player, true);
+                                        ModUtils.GivePlayerItem(player);
+                                    } else if (value.toLowerCase(Locale.ENGLISH).equals("false")) {
+                                        ModUtils.SetJoinedAlready(player, false);
+                                        ModUtils.GivePlayerItem(player);
+                                    } else {
+                                        commandContext.getSource().sendMessage(Text.literal("Please use either true or false."));
+                                    }
+
+
+
+
+                                    return 1;
+                                }))))));
 
 
 
