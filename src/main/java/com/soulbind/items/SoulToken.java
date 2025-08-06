@@ -1,11 +1,19 @@
 package com.soulbind.items;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
+import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class SoulToken extends Item {
@@ -44,6 +52,19 @@ public class SoulToken extends Item {
     // if I would override it without doing super.canMine, it would not check the item for components. So doing the super is almost always necessary,
 
 
+    @Override
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+        if (!world.isClient) {
+
+            // screen is rendering stuff and all rendering is client side.
+            ServerPlayNetworking.send((ServerPlayerEntity) user, new ClientBoundOpenRequestSoulmateScreen());
+
+        }
+
+        return super.use(world, user, hand);
+
+
+    }
 
     // this will tick everytime its in an inventory. specifically an entities inventory.
     @Override
