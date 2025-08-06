@@ -14,22 +14,27 @@ public class ModEvents {
     // imo theyre constructed kind of weirdly but oh well.
     public static void activateEvents() {
 
-        ServerTickEvents.END_WORLD_TICK.register((serverWorld -> {
+
+
+
+
+
+        ServerTickEvents.END_SERVER_TICK.register((serverWorld -> {
             // the serverWorld you see above is something you can use.
 
-            List<ServerPlayerEntity> players = serverWorld.getPlayers();
+            List<ServerPlayerEntity> players = serverWorld.getPlayerManager().getPlayerList();
 
-            // this event is called every world tick. so if we want to say, track how long two people are apart by using a timer that increases we can do that. heres a simple example:
+            // this event is called every server tick. so if we want to say, track how long two people are apart by using a timer that increases we can do that. heres a simple example:
 
-            ticks++; // increases ticks by one. ticks-- decreases by one
-
-            // = assigns stuff, == checks for stuff.
+            // "=" assigns stuff, "==" checks for stuff.
             if (ticks == 40) {
                 System.out.println("it has been 2 seconds.");
                 System.out.println("resetting timer..");
                 ticks = 0;
             }
 
+            // increases ticks by one. ticks-- decreases by one
+            ticks++;
             // this example prints the above every 40 ticks. with minecraft running at 20 TPS it prints it every 2 seconds.
 
 

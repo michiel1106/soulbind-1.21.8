@@ -1,5 +1,7 @@
 package com.soulbind;
 
+import com.soulbind.events.ModEvents;
+import com.soulbind.items.ModItems;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -56,6 +58,8 @@ public class SoulBind implements ModInitializer {
 	@Override
 	public void onInitialize() {
 
+		ModItems.initialize();
+		ModEvents.activateEvents();
 		// btw if you already know stuff from the comments or have read them then you can delete them and commit to the repo, github keeps a history of everything anyway so they wouldnt be completely gone.
 
 		LOGGER.info("Starting Soulbind Mod!");

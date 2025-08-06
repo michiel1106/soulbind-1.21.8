@@ -1,0 +1,1 @@
+give @s soulbind:soul_token

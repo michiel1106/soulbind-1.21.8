@@ -1,0 +1,10 @@
+{
+  "criteria": {
+    "first_join": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "function": "soulbind:first_join"
+  }
+}
