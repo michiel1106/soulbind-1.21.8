@@ -1,7 +1,7 @@
 package com.soulbind.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.soulbind.persistentdata.StateSaverAndLoader;
+
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -25,7 +25,7 @@ public class ModCommands {
                                                 String string = StringArgumentType.getString(commandContext, "string");
                                                 PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
 
-                                                StateSaverAndLoader.getPlayerState(player).soulmate = string;
+                                                ModUtils.writePlayerName(player, string);
 
 
                                                 return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
@@ -41,15 +41,14 @@ public class ModCommands {
 
                                     PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
 
-                                    String soulmate = StateSaverAndLoader.getPlayerState(player).soulmate;
+
+                                    String soulmate = ModUtils.readPlayerName(player);
 
 
                                     commandContext.getSource().getPlayer().sendMessage(Text.literal(soulmate));
 
-                                    // now we can save stuff!
-                                    // I made a small utility method in ModUtils so we can get read it with this too:
-                                    String string = ModUtils.ReadData(player);
 
+                                    // now we can save stuff!
 
                                     return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
                                     // that way datapack creators can do stuff with it, but in our case its not needed. Though returning a number based on for example success could.

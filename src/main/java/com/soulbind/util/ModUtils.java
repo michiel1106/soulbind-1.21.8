@@ -1,26 +1,25 @@
 package com.soulbind.util;
 
-import com.soulbind.SoulBind;
-import com.soulbind.persistentdata.StateSaverAndLoader;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.PigEntity;
+import com.soulbind.dataattachements.SoulmateData;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
 
+import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_SOULMATE_ATTACHMENT;
+
+@SuppressWarnings("UnstableApiUsage")
 public class ModUtils {
-    // here im gonna make some methods to make code everywhere else smaller.
+    // here im gonna make some methods to make code everywhere else easier.
 
 
-    public static void WriteData(String string, PlayerEntity player) {
-        StateSaverAndLoader.getPlayerState(player).soulmate = string;
+    public static void writePlayerName(PlayerEntity player, String string) {
+        SoulmateData data = player.getAttachedOrElse(PLAYER_SOULMATE_ATTACHMENT, SoulmateData.DEFAULT);
+
+        player.setAttached(PLAYER_SOULMATE_ATTACHMENT, data.writeString(string));
     }
-    public static String ReadData(PlayerEntity player) {
-        return StateSaverAndLoader.getPlayerState(player).soulmate;
+
+    public static String readPlayerName(PlayerEntity player) {
+        SoulmateData data = player.getAttachedOrElse(PLAYER_SOULMATE_ATTACHMENT, SoulmateData.DEFAULT);
+
+        return data.string();
     }
 
 
