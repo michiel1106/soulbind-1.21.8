@@ -4,8 +4,10 @@ import com.soulbind.commands.ModCommands;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.events.ModEvents;
 import com.soulbind.items.ModItems;
+import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,8 @@ public class SoulBind implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+
+		PayloadTypeRegistry.playS2C().register(ClientBoundOpenRequestSoulmateScreen.ID, ClientBoundOpenRequestSoulmateScreen.CODEC);
 
 		ModItems.initialize();
 		ModEvents.activateEvents();

@@ -16,6 +16,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SoulToken extends Item {
     public SoulToken(Settings settings) {
         super(settings);
@@ -57,7 +60,14 @@ public class SoulToken extends Item {
         if (!world.isClient) {
 
             // screen is rendering stuff and all rendering is client side.
-            ServerPlayNetworking.send((ServerPlayerEntity) user, new ClientBoundOpenRequestSoulmateScreen());
+            List<String> stringList = new ArrayList<>();
+
+            world.getServer().getPlayerManager().getPlayerList().forEach((player -> {
+                stringList.add(player.getName().getString());
+            }));
+
+
+            ServerPlayNetworking.send((ServerPlayerEntity) user, new ClientBoundOpenRequestSoulmateScreen(stringList));
 
         }
 

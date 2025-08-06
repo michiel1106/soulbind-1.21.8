@@ -35,8 +35,8 @@ public class ModEvents {
 
             // "=" assigns stuff, "==" checks for stuff.
             if (ticks == 40) {
-                System.out.println("it has been 2 seconds.");
-                System.out.println("resetting timer..");
+            //    System.out.println("it has been 2 seconds.");
+            //    System.out.println("resetting timer..");
                 ticks = 0;
             }
 
