@@ -17,7 +17,7 @@ public class ModCommands {
     public static void RegisterCommands() {
         CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) ->
                 commandDispatcher.register(CommandManager.literal("writestring")
-                                .then(CommandManager.argument("player", EntityArgumentType.player()))
+                                .then(CommandManager.argument("player", EntityArgumentType.player())
 
                                     .then(CommandManager.argument("string", StringArgumentType.string())
                                             .executes((commandContext -> {
@@ -30,12 +30,12 @@ public class ModCommands {
 
                                                 return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
                                                 // that way datapack creators can do stuff with it, but in our case its not needed. Though returning a number based on for example success could.
-                                            }))))));
+                                            })))))));
 
 
         CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) ->
                 commandDispatcher.register(CommandManager.literal("readstring")
-                        .then(CommandManager.argument("player", EntityArgumentType.player()))
+                        .then(CommandManager.argument("player", EntityArgumentType.player())
                                 .executes((commandContext -> {
 
 
@@ -53,7 +53,7 @@ public class ModCommands {
 
                                     return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
                                     // that way datapack creators can do stuff with it, but in our case its not needed. Though returning a number based on for example success could.
-                                })))));
+                                }))))));
 
 
 
