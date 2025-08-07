@@ -1,12 +1,12 @@
 package com.soulbind.abilities;
 
 import com.soulbind.util.ModUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
 
 public class Ability {
     // this is gonna be the base ability. Other abilities will extend this class.
@@ -36,7 +36,7 @@ public class Ability {
         return world.getServer().getPlayerManager().getPlayer(ModUtils.readPlayerName(mainPlayer));
     }
 
-    public void onHit(PlayerEntity player, PlayerEntity target, float damage) {
+    public void onHit(PlayerEntity player, Entity target, float damage) {
 
     }
 
@@ -48,7 +48,11 @@ public class Ability {
 
     }
 
-    public void onKill(ServerWorld world, PlayerEntity attacker, PlayerEntity target) {
+    public void onKill(ServerWorld world, PlayerEntity attacker, Entity target) {
+
+    }
+
+    public void onDamage(PlayerEntity player, DamageSource damageSource, float damage) {
 
     }
 

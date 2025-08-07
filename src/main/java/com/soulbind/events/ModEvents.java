@@ -4,21 +4,21 @@ import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
 import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
-import com.soulbind.dataattachements.SoulmateData;
-import com.soulbind.items.ModItems;
 import com.soulbind.util.ModUtils;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 
 import java.util.List;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ModEvents {
     private static int ticks = 0;
 
@@ -26,6 +26,16 @@ public class ModEvents {
 
     // imo theyre constructed kind of weirdly but oh well.
     public static void activateEvents() {
+
+        // onuse done | works sort of. Does not fire when placing blocks for example
+        // onkill done | works.
+        // onhit
+        // useprimary
+        // usesecondary
+        // tick done | works
+        // getcustomdamage
+        // onDamage done | works.
+
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer -> {
             for (PlayerEntity player : MinecraftServer.getPlayerManager().getPlayerList()) {
@@ -35,12 +45,52 @@ public class ModEvents {
 
                     Ability ability = type.createInstance();
 
-                    // Tick it!
                     PlayerEntity soulmate = ModUtils.getSoulmate(player);
                     ability.Tick(player, (ServerWorld) player.getWorld(), soulmate);
                 }
             }
         }));
+
+        UseItemCallback.EVENT.register(((player, world, hand) -> {
+            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+            if (data != null) {
+                AbilityType type = data.type();
+
+                Ability ability = type.createInstance();
+
+                ability.onUse((ServerWorld) world, player.getMainHandStack(), player);
+            }
+            return ActionResult.PASS;
+        }));
+
+        ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(((serverWorld, player, livingEntity) -> {
+            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+            if (data != null) {
+                if (player instanceof PlayerEntity playerEntity) {
+                    AbilityType type = data.type();
+
+                    Ability ability = type.createInstance();
+
+                    ability.onKill(serverWorld, playerEntity, livingEntity);
+                }
+            }
+        }));
+
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(((player, source, baseDamageTaken, damageTaken, blocked) ->  {
+
+            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+            if (data != null) {
+                if (player instanceof PlayerEntity playerEntity) {
+                    AbilityType type = data.type();
+                    Ability ability = type.createInstance();
+                    ability.onDamage(playerEntity, source, damageTaken);
+                }
+            }
+
+
+
+        }));
+
 
 
 

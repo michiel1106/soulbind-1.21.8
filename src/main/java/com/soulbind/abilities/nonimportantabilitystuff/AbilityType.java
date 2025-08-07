@@ -2,6 +2,7 @@ package com.soulbind.abilities.nonimportantabilitystuff;
 
 import com.mojang.serialization.Codec;
 import com.soulbind.abilities.Ability;
+import com.soulbind.abilities.EmptyAbility;
 import com.soulbind.abilities.TestAbility;
 import net.minecraft.util.StringIdentifiable;
 
