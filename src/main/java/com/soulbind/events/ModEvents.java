@@ -1,11 +1,17 @@
 package com.soulbind.events;
 
+import com.soulbind.abilities.Ability;
+import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
+import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
+import com.soulbind.dataattachements.ModDataAttachments;
+import com.soulbind.dataattachements.SoulmateData;
 import com.soulbind.items.ModItems;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,6 +27,20 @@ public class ModEvents {
     // imo theyre constructed kind of weirdly but oh well.
     public static void activateEvents() {
 
+        ServerTickEvents.END_SERVER_TICK.register((MinecraftServer -> {
+            for (PlayerEntity player : MinecraftServer.getPlayerManager().getPlayerList()) {
+                AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+                if (data != null) {
+                    AbilityType type = data.type();
+
+                    Ability ability = type.createInstance();
+
+                    // Tick it!
+                    PlayerEntity soulmate = ModUtils.getSoulmate(player);
+                    ability.Tick(player, (ServerWorld) player.getWorld(), soulmate);
+                }
+            }
+        }));
 
 
 

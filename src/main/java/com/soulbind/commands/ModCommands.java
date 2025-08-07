@@ -2,14 +2,23 @@ package com.soulbind.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.suggestion.SuggestionProviders;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class ModCommands {
@@ -82,11 +91,52 @@ public class ModCommands {
                                     return 1;
                                 }))))));
 
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("ability")
+                .then(CommandManager.literal("set")
+                        .then(CommandManager.argument("player", EntityArgumentType.player())
+                                .then(CommandManager.argument("ability", StringArgumentType.word())
+                                        .executes(commandContext -> {
+                                            PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
+
+                                            String abilityId = StringArgumentType.getString(commandContext, "ability");
+                                            AbilityType abilityType = getAbilityTypeById(abilityId);
+                                            if (abilityType == null) {
+                                                commandContext.getSource().sendError(Text.literal("Invalid ability id: " + abilityId));
+                                                return 0;
+                                            }
+                                            ModUtils.giveAbilityToPlayer(player, abilityType);
+                                            return 1;
+
+                                        }).suggests(ABILITIES)))))));
+
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("ability")
+                .then(CommandManager.literal("remove")
+                        .then(CommandManager.argument("player", EntityArgumentType.player())
+                                        .executes(commandContext -> {
+                                            PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
+                                            ModUtils.removeAbility(player);
+                                            return 1;
+                                        }))))));
+
+
+
 
 
     }
+    public static SuggestionProvider<ServerCommandSource> ABILITIES = (context, builder) -> {
+        return CommandSource.suggestMatching(
+                Arrays.stream(AbilityType.values()).map(AbilityType::asString), builder
+        );
+    };
 
 
-
+    private static AbilityType getAbilityTypeById(String id) {
+        for (AbilityType type : AbilityType.values()) {
+            if (type.asString().equals(id)) {
+                return type;
+            }
+        }
+        return null;
+    }
 
 }

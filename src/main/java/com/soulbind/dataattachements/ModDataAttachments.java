@@ -1,6 +1,7 @@
 package com.soulbind.dataattachements;
 
 import com.soulbind.SoulBind;
+import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.util.Identifier;
@@ -22,6 +23,11 @@ public class ModDataAttachments {
             builder->builder // we are using a builder chain here to configure the attachment data type
                     .initializer(()-> AlreadyJoinedData.DEFAULT) // a default value to provide if you dont supply one
                     .persistent(AlreadyJoinedData.CODEC) // how to save and load the data when the object it is attached to is saved or loaded
+    );
+
+    public static final AttachmentType<AbilityData> PLAYER_ABILITY = AttachmentRegistry.create(
+            Identifier.of(SoulBind.MOD_ID, "ability"),
+            b -> b.initializer(() -> AbilityData.DEFAULT).persistent(AbilityData.CODEC)
     );
 
     public static void init() {
