@@ -44,7 +44,7 @@ public class PlayerEntityMixin {
 		return instance;
 	}
 
-	@Inject(method = "attack", at = @At(value = "HEAD"))
+	@Inject(method = "attack", at = @At(value = "TAIL"))
 	private void attack(Entity target, CallbackInfo ci) {
 		if (target.isAttackable()) {
 			PlayerEntity player = (PlayerEntity)(Object)this;
@@ -65,14 +65,17 @@ public class PlayerEntityMixin {
 	@ModifyArgs(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/damage/DamageSource;F)Z"))
 	private void modifyLavaDamage(Args args) {
 
-		ServerWorld world = args.get(0);
-		DamageSource source = args.get(1);
-		float amount = args.get(2);
-
 		PlayerEntity player = (PlayerEntity)(Object)this;
 		Ability ability = ModUtils.getAbility(player);
-		float customDamage = ability.getCustomDamage(source, amount);
-		args.set(2, customDamage);
+		if (ability != null) {
+			ServerWorld world = args.get(0);
+			DamageSource source = args.get(1);
+			float amount = args.get(2);
+
+
+			float customDamage = ability.getCustomDamage(source, amount);
+			args.set(2, customDamage);
+		}
 
 	}
 }

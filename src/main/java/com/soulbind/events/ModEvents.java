@@ -11,14 +11,26 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
+
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModEvents {
     private static int ticks = 0;
 
     public static void activateEvents() {
+
+
+
+        // instead of doing the arrow thingie and brackets you can also make a method. which can make things look cleaner.
+        // actually, that would be good to do.
+
+        // TODO make every lambda (thats what you call the arrow and bracket thingie) just a direct method reference like mainSoulmateTick.
+        ServerTickEvents.START_SERVER_TICK.register(ModEvents::mainSoulmateTick);
 
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer -> {
@@ -66,6 +78,13 @@ public class ModEvents {
                 if (ability != null) {
                     ability.onDamage(playerEntity, source, damageTaken);
                 }
+
+                PlayerEntity soulmate = ModUtils.getSoulmate(playerEntity);
+
+                if (soulmate != null) {
+                    soulmate.damage((ServerWorld) player.getWorld(), source, damageTaken);
+                }
+
             }
 
 
@@ -85,6 +104,21 @@ public class ModEvents {
 
 
     }
+
+    private static void mainSoulmateTick(MinecraftServer server) {
+        List<ServerPlayerEntity> playerList = server.getPlayerManager().getPlayerList();
+
+        for (ServerPlayerEntity player : playerList) {
+
+
+          //  if (soulmate != null) { // getSoulmate uses the name save to the player but if the player with the name doesnt exist or isnt online it returns null. which isnt good.
+
+           // }
+        }
+
+
+    }
+
 
 
 
