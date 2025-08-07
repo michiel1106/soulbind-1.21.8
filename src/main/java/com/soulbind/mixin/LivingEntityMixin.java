@@ -14,24 +14,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
 
-
     @Shadow public abstract void heal(float amount);
+
+    // Add guard
+    private static final ThreadLocal<Boolean> syncingHealing = ThreadLocal.withInitial(() -> false);
 
     @Inject(method = "heal", at = @At("TAIL"))
     private void onPlayerHeal(float amount, CallbackInfo ci) {
-
+        if (syncingHealing.get()) return; // prevent loop
 
         LivingEntity livingEntity = (LivingEntity)(Object)this;
+        if (!(livingEntity instanceof PlayerEntity player)) return;
 
-        if (livingEntity instanceof PlayerEntity playerEntity) {
-            PlayerEntity soulmate = ModUtils.getSoulmate(playerEntity);
+        PlayerEntity soulmate = ModUtils.getSoulmate(player);
+        if (soulmate == null || soulmate.isDead()) return;
 
-            if (soulmate != null) {
-
-
-                soulmate.heal(amount);
-            }
+        try {
+            syncingHealing.set(true);
+            soulmate.heal(amount); // sync healing
+        } finally {
+            syncingHealing.set(false); // always clear
         }
     }
-
 }

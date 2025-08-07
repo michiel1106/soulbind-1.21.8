@@ -16,10 +16,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModEvents {
+    private static final ThreadLocal<Set<UUID>> syncingDamage = ThreadLocal.withInitial(HashSet::new);
     private static int ticks = 0;
 
     public static void activateEvents() {
@@ -71,25 +75,37 @@ public class ModEvents {
             }
         }));
 
-        ServerLivingEntityEvents.AFTER_DAMAGE.register(((player, source, baseDamageTaken, damageTaken, blocked) -> {
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((player, source, baseDamageTaken, damageTaken, blocked) -> {
+            if (!(player instanceof PlayerEntity playerEntity)) return;
 
-            if (player instanceof PlayerEntity playerEntity) {
-                Ability ability = ModUtils.getAbility(playerEntity);
-                if (ability != null) {
-                    ability.onDamage(playerEntity, source, damageTaken);
-                }
+            // Prevent recursive syncing
+            Set<UUID> syncSet = syncingDamage.get();
+            if (syncSet.contains(playerEntity.getUuid())) return;
 
-                PlayerEntity soulmate = ModUtils.getSoulmate(playerEntity);
-
-                if (soulmate != null) {
-                    soulmate.damage((ServerWorld) player.getWorld(), source, damageTaken);
-                }
-
+            Ability ability = ModUtils.getAbility(playerEntity);
+            if (ability != null) {
+                ability.onDamage(playerEntity, source, damageTaken);
             }
 
+            PlayerEntity soulmate = ModUtils.getSoulmate(playerEntity);
+            if (soulmate != null && !syncSet.contains(soulmate.getUuid())) {
+                try {
+                    // Mark both players as syncing
+                    syncSet.add(playerEntity.getUuid());
+                    syncSet.add(soulmate.getUuid());
+
+                    // Forward the damage
+                    soulmate.damage((ServerWorld) player.getWorld(), source, damageTaken);
+
+                } finally {
+                    // Always clear to prevent memory leaks
+                    syncSet.remove(playerEntity.getUuid());
+                    syncSet.remove(soulmate.getUuid());
+                }
+            }
+        });
 
 
-        }));
 
 
 
