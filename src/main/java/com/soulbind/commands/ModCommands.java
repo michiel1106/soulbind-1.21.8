@@ -114,6 +114,22 @@ public class ModCommands {
                                             return 1;
                                         })))))));
 
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("soulbind")
+                .then(CommandManager.literal("soulmate")
+                        .then(CommandManager.literal("get")
+                                .then(CommandManager.argument("player", EntityArgumentType.player())
+                                        .executes(commandContext -> {
+                                            ServerPlayerEntity entity = EntityArgumentType.getPlayer(commandContext, "player");
+
+                                            commandContext.getSource().sendMessage(Text.literal(ModUtils.readPlayerName(entity)));
+
+
+
+
+
+                                            return 1;
+                                        })))))));
+
     }
 
 
