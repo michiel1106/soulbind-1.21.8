@@ -23,102 +23,103 @@ public class ModCommands {
 
 
     public static void RegisterCommands() {
-        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) ->
-                commandDispatcher.register(CommandManager.literal("writestring")
+
+
+
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(CommandManager.literal("soulbind")
+                        .then(CommandManager.literal("setjoined")
                                 .then(CommandManager.argument("player", EntityArgumentType.player())
+                                        .then(CommandManager.argument("true/false", StringArgumentType.string())
+                                                .executes(ctx -> {
+                                                    ServerPlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
+                                                    String value = StringArgumentType.getString(ctx, "true/false").toLowerCase(Locale.ENGLISH);
 
-                                    .then(CommandManager.argument("string", StringArgumentType.string())
-                                            .executes((commandContext -> {
-
-                                                String string = StringArgumentType.getString(commandContext, "string");
-                                                PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
-
-                                                ModUtils.writePlayerName(player, string);
-
-
-                                                return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
-                                                // that way datapack creators can do stuff with it, but in our case its not needed. Though returning a number based on for example success could.
-                                            })))))));
-
-
-        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) ->
-                commandDispatcher.register(CommandManager.literal("readstring")
-                        .then(CommandManager.argument("player", EntityArgumentType.player())
-                                .executes((commandContext -> {
-
-
-                                    PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
-
-
-                                    String soulmate = ModUtils.readPlayerName(player);
-
-
-                                    commandContext.getSource().getPlayer().sendMessage(Text.literal(soulmate));
-
-
-                                    // now we can save stuff!
-
-                                    return 1; //this is only used by commands like /execute store, for example in the kill command the return is how many it killed.
-                                    // that way datapack creators can do stuff with it, but in our case its not needed. Though returning a number based on for example success could.
-                                }))))));
+                                                    if (value.equals("true") || value.equals("false")) {
+                                                        boolean joined = Boolean.parseBoolean(value);
+                                                        ModUtils.SetJoinedAlready(player, joined);
+                                                        ModUtils.GivePlayerItem(player);
+                                                    } else {
+                                                        ctx.getSource().sendMessage(Text.literal("Please use either true or false."));
+                                                    }
+                                                    return 1;
+                                                }))))));
 
 
 
-        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("setjoined")
-                .then(CommandManager.argument("player", EntityArgumentType.player())
-                        .then(CommandManager.argument("true/false", StringArgumentType.string())
-                                .executes(commandContext -> {
-                                    ServerPlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
-                                    String value = StringArgumentType.getString(commandContext, "true/false");
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(CommandManager.literal("soulbind")
+                        .then(CommandManager.literal("ability")
+                                .then(CommandManager.literal("set")
+                                        .then(CommandManager.argument("player", EntityArgumentType.player())
+                                                .then(CommandManager.argument("ability", StringArgumentType.word())
+                                                        .suggests(ABILITIES)
+                                                        .executes(ctx -> {
+                                                            PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
+                                                            String id = StringArgumentType.getString(ctx, "ability");
+                                                            AbilityType type = getAbilityTypeById(id);
+                                                            if (type == null) {
+                                                                ctx.getSource().sendError(Text.literal("Invalid ability id: " + id));
+                                                                return 0;
+                                                            }
+                                                            ModUtils.giveAbilityToPlayer(player, type);
+                                                            return 1;
+                                                        })))))));
 
-                                    if (value.toLowerCase(Locale.ENGLISH).equals("true")) {
-                                        ModUtils.SetJoinedAlready(player, true);
-                                        ModUtils.GivePlayerItem(player);
-                                    } else if (value.toLowerCase(Locale.ENGLISH).equals("false")) {
-                                        ModUtils.SetJoinedAlready(player, false);
-                                        ModUtils.GivePlayerItem(player);
-                                    } else {
-                                        commandContext.getSource().sendMessage(Text.literal("Please use either true or false."));
-                                    }
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(CommandManager.literal("soulbind")
+                        .then(CommandManager.literal("ability")
+                                .then(CommandManager.literal("remove")
+                                        .then(CommandManager.argument("player", EntityArgumentType.player())
+                                                .executes(ctx -> {
+                                                    PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
+                                                    ModUtils.removeAbility(player);
+                                                    return 1;
+                                                }))))));
 
 
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(CommandManager.literal("soulbind")
+                                .then(CommandManager.literal("soulmate")
+                        .then(CommandManager.literal("bind")
+                                .then(CommandManager.argument("player", EntityArgumentType.player())
+                                        .then(CommandManager.argument("player1", EntityArgumentType.player())
+                                                .executes(ctx -> {
+                                                    ServerPlayerEntity p1 = EntityArgumentType.getPlayer(ctx, "player");
+                                                    ServerPlayerEntity p2 = EntityArgumentType.getPlayer(ctx, "player1");
 
+                                                    ModUtils.writePlayerName(p1, p2.getName().getString());
+                                                    ModUtils.writePlayerName(p2, p1.getName().getString());
 
-                                    return 1;
-                                }))))));
+                                                    return 1;
+                                                })))))));
 
-        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("ability")
-                .then(CommandManager.literal("set")
-                        .then(CommandManager.argument("player", EntityArgumentType.player())
-                                .then(CommandManager.argument("ability", StringArgumentType.word())
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("soulbind")
+                .then(CommandManager.literal("soulmate")
+                        .then(CommandManager.literal("remove")
+                                .then(CommandManager.argument("player", EntityArgumentType.player())
                                         .executes(commandContext -> {
-                                            PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
+                                            ServerPlayerEntity entity = EntityArgumentType.getPlayer(commandContext, "player");
 
-                                            String abilityId = StringArgumentType.getString(commandContext, "ability");
-                                            AbilityType abilityType = getAbilityTypeById(abilityId);
-                                            if (abilityType == null) {
-                                                commandContext.getSource().sendError(Text.literal("Invalid ability id: " + abilityId));
-                                                return 0;
+                                            PlayerEntity soulmate = ModUtils.getSoulmate(entity);
+
+                                            if (soulmate != null) {
+                                                ModUtils.writePlayerName(soulmate, "");
                                             }
-                                            ModUtils.giveAbilityToPlayer(player, abilityType);
+                                            ModUtils.writePlayerName(entity, "");
+
+
                                             return 1;
-
-                                        }).suggests(ABILITIES)))))));
-
-        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("ability")
-                .then(CommandManager.literal("remove")
-                        .then(CommandManager.argument("player", EntityArgumentType.player())
-                                        .executes(commandContext -> {
-                                            PlayerEntity player = EntityArgumentType.getPlayer(commandContext, "player");
-                                            ModUtils.removeAbility(player);
-                                            return 1;
-                                        }))))));
-
-
-
-
+                                        })))))));
 
     }
+
+
+
+
+
     public static SuggestionProvider<ServerCommandSource> ABILITIES = (context, builder) -> {
         return CommandSource.suggestMatching(
                 Arrays.stream(AbilityType.values()).map(AbilityType::asString), builder
