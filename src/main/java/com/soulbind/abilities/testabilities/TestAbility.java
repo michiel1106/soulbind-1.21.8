@@ -1,14 +1,13 @@
-package com.soulbind.abilities;
+package com.soulbind.abilities.testabilities;
 
+import com.soulbind.abilities.Ability;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 
 public class TestAbility extends Ability {
     @Override

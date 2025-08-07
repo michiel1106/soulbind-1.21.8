@@ -33,9 +33,6 @@ public class PlayerEntityMixin {
 	private PlayerEntity onIncreaseStat(PlayerEntity instance, Identifier stat, int amount) {
 		PlayerEntity player = (PlayerEntity)(Object)this;
 
-
-
-
 		if (getTarget() != null) {
 			AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
 			if (data != null) {
@@ -76,11 +73,8 @@ public class PlayerEntityMixin {
 		float amount = args.get(2);
 
 		PlayerEntity player = (PlayerEntity)(Object)this;
-
 		Ability ability = ModUtils.getAbility(player);
-
 		float customDamage = ability.getCustomDamage(source, amount);
-
 		args.set(2, customDamage);
 
 	}

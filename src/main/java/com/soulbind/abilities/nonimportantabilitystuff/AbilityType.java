@@ -2,8 +2,8 @@ package com.soulbind.abilities.nonimportantabilitystuff;
 
 import com.mojang.serialization.Codec;
 import com.soulbind.abilities.Ability;
-import com.soulbind.abilities.EmptyAbility;
-import com.soulbind.abilities.TestAbility;
+import com.soulbind.abilities.testabilities.EmptyAbility;
+import com.soulbind.abilities.testabilities.TestAbility;
 import net.minecraft.util.StringIdentifiable;
 
 import java.util.function.Supplier;

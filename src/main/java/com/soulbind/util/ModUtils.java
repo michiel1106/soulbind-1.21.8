@@ -22,8 +22,6 @@ import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_SOULMATE_A
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModUtils {
-    // here im gonna make some methods to make code everywhere else easier.
-
 
     public static void writePlayerName(PlayerEntity player, String string) {
         SoulmateData data = player.getAttachedOrElse(PLAYER_SOULMATE_ATTACHMENT, SoulmateData.DEFAULT);
@@ -32,18 +30,14 @@ public class ModUtils {
     }
 
     public static void giveAbilityToPlayer(PlayerEntity player, AbilityType type) {
-        // Wrap it in the AbilityData record
         AbilityData abilityData = new AbilityData(type);
 
-        // Attach it to the player
         player.setAttached(ModDataAttachments.PLAYER_ABILITY, abilityData);
     }
 
     public static void removeAbility(PlayerEntity player) {
-        // Wrap it in the AbilityData record
         AbilityData abilityData = new AbilityData(AbilityType.EMPTY_ABILITY);
 
-        // Attach it to the player
         player.setAttached(ModDataAttachments.PLAYER_ABILITY, abilityData);
     }
 
