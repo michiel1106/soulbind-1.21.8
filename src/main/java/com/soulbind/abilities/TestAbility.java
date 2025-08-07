@@ -1,7 +1,10 @@
 package com.soulbind.abilities;
 
+import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -32,9 +35,11 @@ public class TestAbility extends Ability {
     public void usePrimary(PlayerEntity player, ServerWorld world) {
         super.usePrimary(player, world);
 
-        if (getSoulmate() != null) {
-            System.out.println(getSoulmate().getName());
-        }
+        System.out.println(player);
+        System.out.println(ModUtils.readPlayerName(player));
+
+
+
         System.out.println("used primary");
     }
 
@@ -60,5 +65,20 @@ public class TestAbility extends Ability {
     @Override
     public PlayerEntity getSoulmate() {
         return super.getSoulmate();
+    }
+
+    @Override
+    public float getCustomDamage(DamageSource damageSource, float amount) {
+
+        if (damageSource.isOf(DamageTypes.ON_FIRE)) {
+            return 0.0f;
+        }
+        if (damageSource.isOf(DamageTypes.ENDER_PEARL)) {
+            return 0.0f;
+        }
+
+
+        return amount;
+
     }
 }

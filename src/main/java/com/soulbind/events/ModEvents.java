@@ -46,7 +46,9 @@ public class ModEvents {
                     Ability ability = type.createInstance();
 
                     PlayerEntity soulmate = ModUtils.getSoulmate(player);
-                    ability.Tick(player, (ServerWorld) player.getWorld(), soulmate);
+
+
+                    ability.Tick(player, (ServerWorld) MinecraftServer.getPlayerManager().getPlayer(player.getUuid()).getWorld(), soulmate);
                 }
             }
         }));

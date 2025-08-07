@@ -76,6 +76,7 @@ public class SoulBind implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(ActivatePrimaryC2S.ID, ((payload, context) ->  {
 			ServerPlayerEntity player = context.player();
 
+
 			Ability ability = ModUtils.getAbility(player);
 
 			if (ability != null) {
