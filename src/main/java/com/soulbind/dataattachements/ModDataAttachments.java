@@ -1,7 +1,7 @@
 package com.soulbind.dataattachements;
 
 import com.soulbind.SoulBind;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
+import com.soulbind.abilities.importantforregistering.AbilityData;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.util.Identifier;

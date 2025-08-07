@@ -3,20 +3,16 @@ package com.soulbind.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.command.suggestion.SuggestionProviders;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 import java.util.Locale;

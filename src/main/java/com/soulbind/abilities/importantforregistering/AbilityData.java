@@ -1,4 +1,4 @@
-package com.soulbind.abilities.nonimportantabilitystuff;
+package com.soulbind.abilities.importantforregistering;
 
 import com.mojang.serialization.Codec;
 

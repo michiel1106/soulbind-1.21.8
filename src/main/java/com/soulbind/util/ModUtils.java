@@ -1,8 +1,8 @@
 package com.soulbind.util;
 
 import com.soulbind.abilities.Ability;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
+import com.soulbind.abilities.importantforregistering.AbilityData;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.AlreadyJoinedData;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.dataattachements.SoulmateData;
@@ -14,8 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
 
 import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_JOINED_ATTACHMENT;
 import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_SOULMATE_ATTACHMENT;

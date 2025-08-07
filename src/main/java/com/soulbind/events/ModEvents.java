@@ -1,22 +1,18 @@
 package com.soulbind.events;
 
 import com.soulbind.abilities.Ability;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
+import com.soulbind.abilities.importantforregistering.AbilityData;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-
-import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModEvents {

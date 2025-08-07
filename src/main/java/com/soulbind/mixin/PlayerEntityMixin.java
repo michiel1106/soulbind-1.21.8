@@ -2,14 +2,13 @@ package com.soulbind.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.soulbind.abilities.Ability;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
-import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
+import com.soulbind.abilities.importantforregistering.AbilityData;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -17,10 +16,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(PlayerEntity.class)
