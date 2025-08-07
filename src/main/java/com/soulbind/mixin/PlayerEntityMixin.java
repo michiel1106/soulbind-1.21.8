@@ -68,7 +68,6 @@ public class PlayerEntityMixin {
 		PlayerEntity player = (PlayerEntity)(Object)this;
 		Ability ability = ModUtils.getAbility(player);
 		if (ability != null) {
-			ServerWorld world = args.get(0);
 			DamageSource source = args.get(1);
 			float amount = args.get(2);
 
@@ -78,4 +77,6 @@ public class PlayerEntityMixin {
 		}
 
 	}
+
+
 }

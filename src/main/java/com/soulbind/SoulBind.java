@@ -1,5 +1,6 @@
 package com.soulbind;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.soulbind.abilities.Ability;
 import com.soulbind.commands.ModCommands;
 import com.soulbind.dataattachements.ModDataAttachments;
@@ -11,62 +12,48 @@ import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageType;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SoulBind implements ModInitializer {
 	public static final String MOD_ID = "soulbind";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 
+	public static final RegistryKey<DamageType> SOULMATELESS = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of(MOD_ID, "soulmateless"));
 
-	// also idk if you know this already but heres a short explanation of what public, static, private, final and void mean.
 
-	/*
-	public means that a class outside of this one can access it. Right now I can go to ModItems and use the LOGGER variable because its public. if it was private I would not be able to use it.
 
-	static means that theres only one. Take health for example. If the health variable in pigs was static, then every pig would have the same health, but its not, so each pig can have their own health value.
-	you can still make it public though, so if it was public, you could take the pig entity:
 
-	PigEntity pig = new PigEntity();
-
-	pig.health = 0;
-
-	and change their health!
-
-	Next up is final. Final means that you cant change it. Whatever it is assigned is unchangable.
-	You cannot do
-
-	LOGGER = LoggerFactory.getLogger("bindsoul")
-
-	because its final.
-
-	then theres void. functions, or methods, I kind of use them interchangably, can return something. below example:
-
-	 */
-
-	public String thisreturnsastring() {
-		return "tada";
+	public static DamageSource of(World world, RegistryKey<DamageType> key) {
+		return new DamageSource(world.getRegistryManager().getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(key));
 	}
-
-	/*
-	the String argument can be changed to anything. You can change it to SoulToken and make it return the item.
-	what void does is basically say, "this returns nothing". which is good for the initialize class because you dont need to return anything.
-	its just meant to execute more pieces of code.
-
-	 */
-
-
 
 	@Override
 	public void onInitialize() {
+
+
+		CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("damagesoul")
+				.executes(commandContext -> {
+					commandContext.getSource().getPlayer().damage(commandContext.getSource().getWorld(), of(commandContext.getSource().getWorld(), SOULMATELESS), 1000f);
+					return 1;
+				}))));
+
+
 
 		PayloadTypeRegistry.playS2C().register(ClientBoundOpenRequestSoulmateScreen.ID, ClientBoundOpenRequestSoulmateScreen.CODEC);
 		PayloadTypeRegistry.playC2S().register(ActivatePrimaryC2S.ID, ActivatePrimaryC2S.CODEC);

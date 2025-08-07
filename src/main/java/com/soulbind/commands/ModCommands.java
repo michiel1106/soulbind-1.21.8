@@ -79,6 +79,20 @@ public class ModCommands {
                                                     return 1;
                                                 }))))));
 
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(CommandManager.literal("soulbind")
+                        .then(CommandManager.literal("ability")
+                                .then(CommandManager.literal("get")
+                                        .then(CommandManager.argument("player", EntityArgumentType.player())
+                                                .executes(ctx -> {
+                                                    PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
+
+                                                    ctx.getSource().sendMessage(Text.literal(ModUtils.getAbilityString(player)));
+
+
+                                                    return 1;
+                                                }))))));
+
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(CommandManager.literal("soulbind")

@@ -27,6 +27,12 @@ public class ModUtils {
         player.setAttached(PLAYER_SOULMATE_ATTACHMENT, data.writeString(string));
     }
 
+    public static String getAbilityString(PlayerEntity player) {
+        AbilityData data = player.getAttachedOrElse(ModDataAttachments.PLAYER_ABILITY, new AbilityData(AbilityType.EMPTY_ABILITY));
+
+        return "Ability: " + data.type().name().toLowerCase(); // or .asString() if using StringIdentifiable
+    }
+
     public static void giveAbilityToPlayer(PlayerEntity player, AbilityType type) {
         AbilityData abilityData = new AbilityData(type);
 

@@ -39,7 +39,7 @@ public class ModEvents {
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer -> {
             for (PlayerEntity player : MinecraftServer.getPlayerManager().getPlayerList()) {
-                AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+                AbilityData data = player.getAttachedOrElse(ModDataAttachments.PLAYER_ABILITY, new AbilityData(AbilityType.EMPTY_ABILITY));
                 if (data != null) {
                     AbilityType type = data.type();
 
@@ -48,8 +48,16 @@ public class ModEvents {
                     PlayerEntity soulmate = ModUtils.getSoulmate(player);
 
 
-                    ability.Tick(player, (ServerWorld) MinecraftServer.getPlayerManager().getPlayer(player.getUuid()).getWorld(), soulmate);
+                    ability.Tick(player, MinecraftServer.getPlayerManager().getPlayer(player.getUuid()).getWorld(), soulmate);
                 }
+            }
+        }));
+
+        ServerPlayerEvents.AFTER_RESPAWN.register(((oldPlayer, newPlayer, alive) -> {
+            Ability ability = ModUtils.getAbility(newPlayer);
+
+            if (ability != null) {
+                ability.onRespawn(newPlayer);
             }
         }));
 
@@ -61,6 +69,8 @@ public class ModEvents {
             }
             return ActionResult.PASS;
         }));
+
+
 
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(((serverWorld, player, livingEntity) -> {
 
@@ -95,6 +105,8 @@ public class ModEvents {
                     syncSet.add(soulmate.getUuid());
 
                     // Forward the damage
+
+
                     soulmate.damage((ServerWorld) player.getWorld(), source, damageTaken);
 
                 } finally {
@@ -113,6 +125,7 @@ public class ModEvents {
             if (!ModUtils.HasAlreadyJoined(player)) {
 
 
+                ModUtils.giveAbilityToPlayer(player, AbilityType.EMPTY_ABILITY);
                 ModUtils.GivePlayerItem(player);
             }
 

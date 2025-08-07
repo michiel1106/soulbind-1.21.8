@@ -16,6 +16,7 @@ public class ModDataAttachments {
                     builder->builder
                             .initializer(()-> SoulmateData.DEFAULT)
                             .persistent(SoulmateData.CODEC)
+                            .copyOnDeath()
  );
 
     public static final AttachmentType<AlreadyJoinedData> PLAYER_JOINED_ATTACHMENT = AttachmentRegistry.create(
@@ -23,11 +24,15 @@ public class ModDataAttachments {
             builder->builder
                     .initializer(()-> AlreadyJoinedData.DEFAULT)
                     .persistent(AlreadyJoinedData.CODEC)
+                    .copyOnDeath()
     );
 
     public static final AttachmentType<AbilityData> PLAYER_ABILITY = AttachmentRegistry.create(
             Identifier.of(SoulBind.MOD_ID, "ability"),
-            b -> b.initializer(() -> AbilityData.DEFAULT).persistent(AbilityData.CODEC)
+            builder -> builder
+                    .initializer(() -> AbilityData.DEFAULT)
+                    .persistent(AbilityData.CODEC)
+                    .copyOnDeath()
     );
 
     public static void init() {
