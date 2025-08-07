@@ -5,6 +5,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Hand;
 
 public class TestAbility extends Ability {
     @Override
@@ -28,6 +29,23 @@ public class TestAbility extends Ability {
     }
 
     @Override
+    public void usePrimary(PlayerEntity player, ServerWorld world) {
+        super.usePrimary(player, world);
+
+        if (getSoulmate() != null) {
+            System.out.println(getSoulmate().getName());
+        }
+        System.out.println("used primary");
+    }
+
+    @Override
+    public void useSecondary(PlayerEntity player, ServerWorld world) {
+        super.useSecondary(player, world);
+
+        System.out.println("used secondary.");
+    }
+
+    @Override
     public void onUse(ServerWorld world, ItemStack stack, PlayerEntity player) {
         super.onUse(world, stack, player);
         System.out.println("onuse + " + stack.toString());
@@ -37,5 +55,10 @@ public class TestAbility extends Ability {
     public void onDamage(PlayerEntity player, DamageSource damageSource, float damage) {
         super.onDamage(player, damageSource, damage);
         System.out.println(damage);
+    }
+
+    @Override
+    public PlayerEntity getSoulmate() {
+        return super.getSoulmate();
     }
 }

@@ -1,5 +1,6 @@
 package com.soulbind.util;
 
+import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.nonimportantabilitystuff.AbilityData;
 import com.soulbind.abilities.nonimportantabilitystuff.AbilityType;
 import com.soulbind.dataattachements.AlreadyJoinedData;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_JOINED_ATTACHMENT;
@@ -82,6 +84,16 @@ public class ModUtils {
 
         player.giveItemStack(itemStack);
         ModUtils.SetJoinedAlready(player, true);
+    }
+
+    public static Ability getAbility(PlayerEntity player) {
+        AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
+        if (data != null) {
+            AbilityType type = data.type();
+
+            return type.createInstance();
+        }
+        return null;
     }
 
 

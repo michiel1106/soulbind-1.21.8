@@ -1,13 +1,19 @@
 package com.soulbind;
 
+import com.soulbind.abilities.Ability;
 import com.soulbind.commands.ModCommands;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.events.ModEvents;
 import com.soulbind.items.ModItems;
+import com.soulbind.packets.ActivatePrimaryC2S;
+import com.soulbind.packets.ActivateSecondaryC2S;
 import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
+import com.soulbind.util.ModUtils;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +69,35 @@ public class SoulBind implements ModInitializer {
 	public void onInitialize() {
 
 		PayloadTypeRegistry.playS2C().register(ClientBoundOpenRequestSoulmateScreen.ID, ClientBoundOpenRequestSoulmateScreen.CODEC);
+		PayloadTypeRegistry.playC2S().register(ActivatePrimaryC2S.ID, ActivatePrimaryC2S.CODEC);
+		PayloadTypeRegistry.playC2S().register(ActivateSecondaryC2S.ID, ActivateSecondaryC2S.CODEC);
+
+
+		ServerPlayNetworking.registerGlobalReceiver(ActivatePrimaryC2S.ID, ((payload, context) ->  {
+			ServerPlayerEntity player = context.player();
+
+			Ability ability = ModUtils.getAbility(player);
+
+			if (ability != null) {
+				ability.usePrimary(player, player.getWorld());
+			}
+
+
+		}));
+
+		ServerPlayNetworking.registerGlobalReceiver(ActivateSecondaryC2S.ID, ((payload, context) ->  {
+			ServerPlayerEntity player = context.player();
+
+			Ability ability = ModUtils.getAbility(player);
+
+			if (ability != null) {
+				ability.useSecondary(player, player.getWorld());
+			}
+
+
+		}));
+
+
 
 		ModItems.initialize();
 		ModEvents.activateEvents();

@@ -6,7 +6,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 
 public class Ability {
     // this is gonna be the base ability. Other abilities will extend this class.
@@ -16,11 +15,10 @@ public class Ability {
     public ServerWorld world;
 
 
-    public void UsePrimary(PlayerEntity player, ServerWorld world, Hand hand) {
-
+    public void usePrimary(PlayerEntity player, ServerWorld world) {
     }
 
-    public void UseSecondary(PlayerEntity player, ServerWorld world, Hand hand) {
+    public void useSecondary(PlayerEntity player, ServerWorld world) {
 
     }
 

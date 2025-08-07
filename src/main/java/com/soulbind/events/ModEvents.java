@@ -27,11 +27,11 @@ public class ModEvents {
     // imo theyre constructed kind of weirdly but oh well.
     public static void activateEvents() {
 
-        // onuse done | works sort of. Does not fire when placing blocks for example
+        // onuse done | works, sort of. Does not fire when placing blocks for example
         // onkill done | works.
-        // onhit
-        // useprimary
-        // usesecondary
+        // onhit done | works
+        // useprimary done | works
+        // usesecondary done | works
         // tick done | works
         // getcustomdamage
         // onDamage done | works.
@@ -52,37 +52,32 @@ public class ModEvents {
         }));
 
         UseItemCallback.EVENT.register(((player, world, hand) -> {
-            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
-            if (data != null) {
-                AbilityType type = data.type();
 
-                Ability ability = type.createInstance();
-
+            Ability ability = ModUtils.getAbility(player);
+            if (ability != null) {
                 ability.onUse((ServerWorld) world, player.getMainHandStack(), player);
             }
             return ActionResult.PASS;
         }));
 
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(((serverWorld, player, livingEntity) -> {
-            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
-            if (data != null) {
-                if (player instanceof PlayerEntity playerEntity) {
-                    AbilityType type = data.type();
 
-                    Ability ability = type.createInstance();
 
+
+            if (player instanceof PlayerEntity playerEntity) {
+                Ability ability = ModUtils.getAbility(playerEntity);
+                if (ability != null) {
                     ability.onKill(serverWorld, playerEntity, livingEntity);
                 }
+
             }
         }));
 
-        ServerLivingEntityEvents.AFTER_DAMAGE.register(((player, source, baseDamageTaken, damageTaken, blocked) ->  {
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(((player, source, baseDamageTaken, damageTaken, blocked) -> {
 
-            AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
-            if (data != null) {
-                if (player instanceof PlayerEntity playerEntity) {
-                    AbilityType type = data.type();
-                    Ability ability = type.createInstance();
+            if (player instanceof PlayerEntity playerEntity) {
+                Ability ability = ModUtils.getAbility(playerEntity);
+                if (ability != null) {
                     ability.onDamage(playerEntity, source, damageTaken);
                 }
             }
