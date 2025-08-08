@@ -4,6 +4,7 @@ import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityData;
 import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.AlreadyJoinedData;
+import com.soulbind.dataattachements.MaceOwner;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.dataattachements.SoulmateData;
 import com.soulbind.items.ModItems;
@@ -14,18 +15,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.World;
 
-import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_JOINED_ATTACHMENT;
-import static com.soulbind.dataattachements.ModDataAttachments.PLAYER_SOULMATE_ATTACHMENT;
+import static com.soulbind.dataattachements.ModDataAttachments.*;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModUtils {
 
-    public static void writePlayerName(PlayerEntity player, String string) {
-        SoulmateData data = player.getAttachedOrElse(PLAYER_SOULMATE_ATTACHMENT, SoulmateData.DEFAULT);
 
-        player.setAttached(PLAYER_SOULMATE_ATTACHMENT, data.writeString(string));
-    }
 
     public static String getAbilityString(PlayerEntity player) {
         AbilityData data = player.getAttachedOrElse(ModDataAttachments.PLAYER_ABILITY, new AbilityData(AbilityType.EMPTY_ABILITY));
@@ -94,6 +92,40 @@ public class ModUtils {
         return null;
     }
 
+
+    public static void setMaceOwnerString(ServerWorld world, String string) {
+        MaceOwner data = world.getAttachedOrElse(MACE_OWNER, MaceOwner.DEFAULT);
+        world.setAttached(MACE_OWNER, data.writeString(string));
+    }
+
+
+    public static void writePlayerName(PlayerEntity player, String string) {
+        SoulmateData data = player.getAttachedOrElse(PLAYER_SOULMATE_ATTACHMENT, SoulmateData.DEFAULT);
+
+        player.setAttached(PLAYER_SOULMATE_ATTACHMENT, data.writeString(string));
+    }
+
+    public static void setMaceOwnerPlayer(ServerWorld world, PlayerEntity player) {
+        MaceOwner data = world.getServer().getOverworld().getAttachedOrElse(MACE_OWNER, MaceOwner.DEFAULT);
+
+
+        world.setAttached(MACE_OWNER, data.writeString(player.getName().getString()));
+    }
+
+
+
+    public static String getMaceOwnerString(ServerWorld world) {
+        MaceOwner data = world.getServer().getOverworld().getAttachedOrElse(MACE_OWNER, MaceOwner.DEFAULT);
+
+        return data.string();
+    }
+
+    public static PlayerEntity getMaceOwnerPlayer(ServerWorld world) {
+        MaceOwner data = world.getServer().getOverworld().getAttachedOrElse(MACE_OWNER, MaceOwner.DEFAULT);
+
+        return world.getServer().getPlayerManager().getPlayer(data.string());
+
+    }
 
 
 

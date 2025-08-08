@@ -62,9 +62,6 @@ public class Ability {
     public void onRespawn(PlayerEntity player) {
         double baseValue = player.getAttributeInstance(EntityAttributes.MAX_HEALTH).getBaseValue();
         player.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(baseValue - 2);
-
-        System.out.println("death");
-
     }
 
 

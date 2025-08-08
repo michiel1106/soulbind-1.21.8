@@ -126,9 +126,20 @@ public class ModEvents {
 
 
         ServerPlayerEvents.JOIN.register((player -> {
+
+            ServerWorld world = player.getWorld();
+
+            PlayerEntity maceOwnerPlayer = ModUtils.getMaceOwnerPlayer(world);
+
+            if (maceOwnerPlayer != null) {
+                if (!MaceHandler.hasMace(player)) {
+                    if (maceOwnerPlayer.getName().getString().equals(player.getName().getString())) {
+                        ModUtils.setMaceOwnerString(world, "");
+                    }
+                }
+            }
+
             if (!ModUtils.HasAlreadyJoined(player)) {
-
-
                 ModUtils.giveAbilityToPlayer(player, AbilityType.EMPTY_ABILITY);
                 ModUtils.GivePlayerItem(player);
             }

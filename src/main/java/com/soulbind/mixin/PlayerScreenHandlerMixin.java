@@ -33,7 +33,6 @@ public abstract class PlayerScreenHandlerMixin {
                 if (stack.getItem() instanceof MaceItem) {
 
                     if (MaceHandler.maceActive) {
-                        System.out.println("Prevent quick-moving of MaceItem from crafting output.");
                         cir.setReturnValue(ItemStack.EMPTY);
                         cir.cancel();
                     }

@@ -5,8 +5,10 @@
   "mixins": [
     "CrafterBlockMixin",
     "CraftingTableScreenHandlermixin",
+    "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerEntityMixin",
+    "PlayerInventoryMixin",
     "PlayerScreenHandlerMixin",
     "ResultSlotMixin",
     "ServerPlayerEntityMixin"

@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CraftingResultSlot.class)
-@Debug(export = true)
 public abstract class ResultSlotMixin extends Slot {
 
 
@@ -28,7 +27,6 @@ public abstract class ResultSlotMixin extends Slot {
             if (this.getStack().getItem() instanceof MaceItem) {
 
                 if (MaceHandler.maceActive) {
-                    System.out.println("tried to craft mace item. canceling");
                     cir.setReturnValue(ItemStack.EMPTY);
                     cir.cancel();
                 }
@@ -44,7 +42,6 @@ public abstract class ResultSlotMixin extends Slot {
             if (this.getStack().getItem() instanceof MaceItem) {
 
                 if (MaceHandler.maceActive) {
-                    System.out.println("tried to craft mace item. canceling");
                     this.setStack(ItemStack.EMPTY);
                     cir.cancel();
                 }

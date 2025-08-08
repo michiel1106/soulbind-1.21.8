@@ -3,6 +3,7 @@ package com.soulbind.dataattachements;
 import com.soulbind.SoulBind;
 import com.soulbind.abilities.importantforregistering.AbilityData;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.util.Identifier;
 
@@ -17,7 +18,16 @@ public class ModDataAttachments {
                             .initializer(()-> SoulmateData.DEFAULT)
                             .persistent(SoulmateData.CODEC)
                             .copyOnDeath()
+
  );
+
+    public static final AttachmentType<MaceOwner> MACE_OWNER = AttachmentRegistry.create(
+            Identifier.of(SoulBind.MOD_ID,"maceownerz"),
+            builder->builder
+                    .initializer(()-> MaceOwner.DEFAULT)
+                    .persistent(MaceOwner.CODEC)
+                    .copyOnDeath()
+    );
 
     public static final AttachmentType<AlreadyJoinedData> PLAYER_JOINED_ATTACHMENT = AttachmentRegistry.create(
             Identifier.of(SoulBind.MOD_ID,"joined"),

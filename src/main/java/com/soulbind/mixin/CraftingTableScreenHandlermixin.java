@@ -29,7 +29,6 @@ public abstract class CraftingTableScreenHandlermixin {
 
 
                     if (MaceHandler.maceActive) {
-                        System.out.println("Prevent quick-moving of MaceItem from crafting output.");
                         cir.setReturnValue(ItemStack.EMPTY);
                         cir.cancel();
                     }

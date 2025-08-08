@@ -33,6 +33,7 @@ public class ModCommands {
                         .then(CommandManager.literal("info").executes(commandContext -> {
 
                             commandContext.getSource().sendMessage(Text.literal("Currently, maceActive = " + MaceHandler.maceActive));
+                            commandContext.getSource().sendMessage(Text.literal("Current player saved as mace owner = " + ModUtils.getMaceOwnerString(commandContext.getSource().getServer().getOverworld())));
                             return 0;
                         }))
 

@@ -1,18 +1,28 @@
 package com.soulbind.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityData;
 import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
+import com.soulbind.macehandler.MaceHandler;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,11 +30,19 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+@SuppressWarnings("UnstableApiUsage")
 @Mixin(PlayerEntity.class)
-public class PlayerEntityMixin {
+public abstract class PlayerEntityMixin extends LivingEntity {
+
+	@Shadow
+    public abstract @Nullable ItemEntity dropItem(ItemStack stack, boolean retainOwnership);
 
 	@Unique
 	private LivingEntity target;
+
+	protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+		super(entityType, world);
+	}
 
 	@ModifyReceiver(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;increaseStat(Lnet/minecraft/util/Identifier;I)V"))
 	private PlayerEntity onIncreaseStat(PlayerEntity instance, Identifier stat, int amount) {
@@ -44,6 +62,31 @@ public class PlayerEntityMixin {
 		return instance;
 	}
 
+
+	@WrapOperation(method = "dropInventory", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
+	private boolean dropInventoryMixin(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original) {
+
+		PlayerEntity player = (PlayerEntity)(Object)this;
+
+		if (!ModUtils.readPlayerName(player).equals("")) {
+			return true;
+		}
+
+		return instance.getBoolean(rule);
+	}
+
+	@WrapOperation(method = "getExperienceToDrop", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
+	private boolean experienceDropMixin(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original) {
+
+		PlayerEntity player = (PlayerEntity)(Object)this;
+
+		if (!ModUtils.readPlayerName(player).equals("")) {
+			return true;
+		}
+		return instance.getBoolean(rule);
+	}
+
+
 	@Inject(method = "attack", at = @At(value = "TAIL"))
 	private void attack(Entity target, CallbackInfo ci) {
 		if (target.isAttackable()) {
@@ -54,11 +97,13 @@ public class PlayerEntityMixin {
 		}
 	}
 
-    public LivingEntity getTarget() {
+    @Unique
+	public LivingEntity getTarget() {
         return target;
     }
 
-    public void setTarget(LivingEntity target) {
+    @Unique
+	public void setTarget(LivingEntity target) {
         this.target = target;
     }
 
@@ -77,6 +122,8 @@ public class PlayerEntityMixin {
 		}
 
 	}
+
+
 
 
 }
