@@ -7,9 +7,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("DataFlowIssue")
 public class Ability {
-    // this is gonna be the base ability. Other abilities will extend this class.
+    // this is going to be the base ability. Other abilities will extend this class.
 
     public PlayerEntity soulmate;
     public PlayerEntity mainPlayer;
@@ -23,10 +25,12 @@ public class Ability {
 
     }
 
-    public void Tick(PlayerEntity player, ServerWorld world, PlayerEntity soulmate) {
+    public void Tick(PlayerEntity player, ServerWorld world, @Nullable PlayerEntity soulmate) {
         this.soulmate = soulmate;
         this.mainPlayer = player;
         this.world = world;
+
+
 
 
     }
@@ -50,6 +54,14 @@ public class Ability {
     public void onKill(ServerWorld world, PlayerEntity attacker, Entity target) {
 
         if (target instanceof PlayerEntity) {
+
+
+            PlayerEntity soulmate1 = ModUtils.getSoulmate(attacker);
+            if (soulmate1 != null) {
+                double baseValue1 = soulmate1.getAttributeInstance(EntityAttributes.MAX_HEALTH).getBaseValue();
+                soulmate1.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(baseValue1 + 2);
+            }
+
             double baseValue = attacker.getAttributeInstance(EntityAttributes.MAX_HEALTH).getBaseValue();
             attacker.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(baseValue + 2);
         }

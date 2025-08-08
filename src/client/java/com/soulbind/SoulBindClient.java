@@ -1,18 +1,25 @@
 package com.soulbind;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.soulbind.packets.ActivatePrimaryC2S;
 import com.soulbind.packets.ActivateSecondaryC2S;
 import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
-import com.soulbind.screens.RequestSoulmateScreen;
+import com.soulbind.screens.OriginDisplayScreen;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SoulBindClient implements ClientModInitializer {
 	private static KeyBinding primary;
@@ -47,11 +54,17 @@ public class SoulBindClient implements ClientModInitializer {
 
 		}));
 
+		ClientCommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess) -> commandDispatcher.register((ClientCommandManager.literal("openscreen").executes(commandContext -> {
+			List<String> stringList = new ArrayList<>();
+
+			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.literal(""), stringList));
+			return 1;
+		})))));
 
 		ClientPlayNetworking.registerGlobalReceiver(ClientBoundOpenRequestSoulmateScreen.ID, (payload, context) -> {
 
 			System.out.println(payload.stringList());
-			MinecraftClient.getInstance().setScreen(new RequestSoulmateScreen(Text.empty(), payload.stringList()));
+			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), payload.stringList()));
 		});
 
 
