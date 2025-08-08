@@ -4,6 +4,7 @@ package com.soulbind.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.soulbind.SoulBind;
+import com.soulbind.abilities.Ability;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -35,6 +36,7 @@ public abstract class ServerPlayerEntityMixin {
         if (soulmate != null) {
             soulmate.damage(this.getWorld(), SoulBind.of(getWorld(), SoulBind.SOULMATELESS), Float.MAX_VALUE);
         }
+
     }
 
 
@@ -46,6 +48,12 @@ public abstract class ServerPlayerEntityMixin {
             if (stack.isOf(Items.MACE)) {
                 this.dropItem(new ItemStack(Items.MACE), false, false);
             }
+        }
+
+        Ability ability = ModUtils.getAbility(player);
+
+        if (ability != null) {
+            ability.onRespawn(player);
         }
     }
 

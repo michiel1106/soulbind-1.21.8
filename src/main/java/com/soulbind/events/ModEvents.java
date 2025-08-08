@@ -1,9 +1,11 @@
 package com.soulbind.events;
 
+import com.soulbind.SoulBind;
 import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityData;
 import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
+import com.soulbind.items.ModItems;
 import com.soulbind.macehandler.MaceHandler;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
@@ -11,7 +13,14 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,7 +48,38 @@ public class ModEvents {
 
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer -> {
+
+            for (ServerWorld world : MinecraftServer.getWorlds()) {
+                List<? extends ItemEntity> worldTokenItems = world.getEntitiesByType(EntityType.ITEM, SoulBind.IS_TOKEN);
+
+                worldTokenItems.forEach((Entity::discard));
+
+            }
+
+
             for (PlayerEntity player : MinecraftServer.getPlayerManager().getPlayerList()) {
+
+                for (ItemStack itemStack : player.getInventory()) {
+
+                    if (itemStack.isOf(ModItems.SOUL_TOKEN)) {
+                        NbtComponent customData = itemStack.get(DataComponentTypes.CUSTOM_DATA);
+                        if (customData != null) {
+                            String myValue = customData.copyNbt().getString("playername").orElseGet(() -> "d");
+
+                            if (!player.getName().getString().equals(myValue)) {
+                                itemStack.decrement(1);
+                            }
+                        }
+                    }
+
+
+                    if (!hasToken(player)) {
+                        ModUtils.GivePlayerItem(player);
+                    }
+                }
+
+
+
                 AbilityData data = player.getAttachedOrElse(ModDataAttachments.PLAYER_ABILITY, new AbilityData(AbilityType.EMPTY_ABILITY));
                 if (data != null) {
                     AbilityType type = data.type();
@@ -54,13 +94,9 @@ public class ModEvents {
             }
         }));
 
-        ServerPlayerEvents.AFTER_RESPAWN.register(((oldPlayer, newPlayer, alive) -> {
-            Ability ability = ModUtils.getAbility(newPlayer);
 
-            if (ability != null) {
-                ability.onRespawn(newPlayer);
-            }
-        }));
+
+
 
         UseItemCallback.EVENT.register(((player, world, hand) -> {
 
@@ -163,6 +199,15 @@ public class ModEvents {
 
     }
 
+
+    public static boolean hasToken(PlayerEntity player) {
+        for (ItemStack itemStack : player.getInventory()) {
+            if (itemStack.isOf(ModItems.SOUL_TOKEN)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 

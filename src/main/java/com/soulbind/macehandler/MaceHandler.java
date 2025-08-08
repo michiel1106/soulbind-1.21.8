@@ -34,7 +34,6 @@ public class MaceHandler {
 
 
     public static final Predicate<Entity> IS_MACE = entity -> {
-
         if (entity instanceof ItemEntity item) {
             if (item.getStack().getItem() instanceof MaceItem) {
                 return true;

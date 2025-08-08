@@ -6,6 +6,7 @@ import com.soulbind.commands.ModCommands;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.events.ModEvents;
 import com.soulbind.items.ModItems;
+import com.soulbind.items.SoulToken;
 import com.soulbind.packets.ActivatePrimaryC2S;
 import com.soulbind.packets.ActivateSecondaryC2S;
 import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
@@ -15,8 +16,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
+import net.minecraft.item.MaceItem;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -28,8 +32,20 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Predicate;
+
 public class SoulBind implements ModInitializer {
 	public static final String MOD_ID = "soulbind";
+
+
+	public static final Predicate<Entity> IS_TOKEN = entity -> {
+		if (entity instanceof ItemEntity item) {
+			if (item.getStack().getItem() instanceof SoulToken) {
+				return true;
+			}
+		}
+		return false;
+	};
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
