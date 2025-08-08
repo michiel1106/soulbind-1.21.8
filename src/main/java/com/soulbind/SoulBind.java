@@ -47,17 +47,6 @@ public class SoulBind implements ModInitializer {
 	public void onInitialize() {
 
 
-
-
-
-		CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("damagesoul")
-				.executes(commandContext -> {
-					commandContext.getSource().getPlayer().damage(commandContext.getSource().getWorld(), of(commandContext.getSource().getWorld(), SOULMATELESS), 1000f);
-					return 1;
-				}))));
-
-
-
 		PayloadTypeRegistry.playS2C().register(ClientBoundOpenRequestSoulmateScreen.ID, ClientBoundOpenRequestSoulmateScreen.CODEC);
 		PayloadTypeRegistry.playC2S().register(ActivatePrimaryC2S.ID, ActivatePrimaryC2S.CODEC);
 		PayloadTypeRegistry.playC2S().register(ActivateSecondaryC2S.ID, ActivateSecondaryC2S.CODEC);

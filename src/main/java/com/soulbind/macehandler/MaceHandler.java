@@ -21,7 +21,7 @@ public class MaceHandler {
     public static boolean maceActive = false;
     public static List<? extends ItemEntity> maceEntities;
 
-    public static ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     public static int ticks = 0;
 
@@ -42,12 +42,11 @@ public class MaceHandler {
 
         executorService.submit(() -> {
             try {
-                Thread.sleep(500);
+                Thread.sleep(0, 100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
-            System.out.println("macecrafted has been called. it is now: " + maceActive);
             maceActive = true;
         });
 
@@ -61,20 +60,9 @@ public class MaceHandler {
 
        maceEntities = server.getOverworld().getEntitiesByType(EntityType.ITEM, IS_MACE);
 
-        ticks++;
 
-        System.out.println(maceActive);
-
-
-
-
-        if (ticks == 3) {
             ticks = 0;
-
-
-
             if (maceEntities.size() >= 2) {
-
 
                 ItemEntity first = maceEntities.getFirst();
                 ItemEntity last = maceEntities.getLast();
@@ -86,7 +74,12 @@ public class MaceHandler {
                 }
 
             }
-        }
+
+
+            if (!maceEntities.isEmpty()) {
+                maceActive = true;
+            }
+
 
 
 

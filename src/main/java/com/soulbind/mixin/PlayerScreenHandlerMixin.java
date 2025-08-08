@@ -25,17 +25,20 @@ public abstract class PlayerScreenHandlerMixin {
 
     @Inject(method = "quickMove", at = @At("HEAD"), cancellable = true)
     private void onQuickMove(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir) {
-        Slot slot = this.getOutputSlot();
-        if (slot instanceof CraftingResultSlot) {
-            ItemStack stack = slot.getStack();
-            if (stack.getItem() instanceof MaceItem) {
 
-                if (MaceHandler.maceActive) {
-                    System.out.println("Prevent quick-moving of MaceItem from crafting output.");
-                    cir.setReturnValue(ItemStack.EMPTY);
-                    cir.cancel();
+        if (index == 0) {
+            Slot slot = this.getOutputSlot();
+            if (slot instanceof CraftingResultSlot) {
+                ItemStack stack = slot.getStack();
+                if (stack.getItem() instanceof MaceItem) {
+
+                    if (MaceHandler.maceActive) {
+                        System.out.println("Prevent quick-moving of MaceItem from crafting output.");
+                        cir.setReturnValue(ItemStack.EMPTY);
+                        cir.cancel();
+                    }
+                    MaceHandler.maceCrafted();
                 }
-                MaceHandler.maceCrafted();
             }
         }
     }

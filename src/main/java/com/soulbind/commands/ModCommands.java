@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.soulbind.abilities.importantforregistering.AbilityType;
+import com.soulbind.macehandler.MaceHandler;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandSource;
@@ -27,6 +28,30 @@ public class ModCommands {
 
 
 
+        CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("soulbind")
+                .then(CommandManager.literal("mace")
+                        .then(CommandManager.literal("info").executes(commandContext -> {
+
+                            commandContext.getSource().sendMessage(Text.literal("Currently, maceActive = " + MaceHandler.maceActive));
+                            return 0;
+                        }))
+
+
+                        .then(CommandManager.literal("onemace")
+                                .then(CommandManager.argument("true/false", StringArgumentType.string())
+                                        .executes(commandContext -> {
+                                            String string = StringArgumentType.getString(commandContext, "true/false");
+                                            if (string.equals("false")) {
+                                                MaceHandler.maceActive = false;
+                                            } else if (string.equals("true")) {
+                                                MaceHandler.maceActive = true;
+                                            }else {
+                                                commandContext.getSource().sendMessage(Text.literal("Please use either true or false as an argument."));
+                                            }
+                                            return 1;
+                                        })))).requires((source -> source.hasPermissionLevel(2))))));
+
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(CommandManager.literal("soulbind")
                         .then(CommandManager.literal("setjoined")
@@ -44,7 +69,7 @@ public class ModCommands {
                                                         ctx.getSource().sendMessage(Text.literal("Please use either true or false."));
                                                     }
                                                     return 1;
-                                                }))))));
+                                                })))).requires((source -> source.hasPermissionLevel(2)))));
 
 
 
@@ -65,7 +90,7 @@ public class ModCommands {
                                                             }
                                                             ModUtils.giveAbilityToPlayer(player, type);
                                                             return 1;
-                                                        })))))));
+                                                        }))))).requires((source -> source.hasPermissionLevel(2)))));
 
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
@@ -77,7 +102,7 @@ public class ModCommands {
                                                     PlayerEntity player = EntityArgumentType.getPlayer(ctx, "player");
                                                     ModUtils.removeAbility(player);
                                                     return 1;
-                                                }))))));
+                                                })))).requires((source -> source.hasPermissionLevel(2)))));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(CommandManager.literal("soulbind")
@@ -91,7 +116,7 @@ public class ModCommands {
 
 
                                                     return 1;
-                                                }))))));
+                                                })))).requires((source -> source.hasPermissionLevel(2)))));
 
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
@@ -108,7 +133,7 @@ public class ModCommands {
                                                     ModUtils.writePlayerName(p2, p1.getName().getString());
 
                                                     return 1;
-                                                })))))));
+                                                }))))).requires((source -> source.hasPermissionLevel(2)))));
 
         CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("soulbind")
                 .then(CommandManager.literal("soulmate")
@@ -126,7 +151,7 @@ public class ModCommands {
 
 
                                             return 1;
-                                        })))))));
+                                        })))).requires((source -> source.hasPermissionLevel(2))))));
 
         CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("soulbind")
                 .then(CommandManager.literal("soulmate")
@@ -142,7 +167,7 @@ public class ModCommands {
 
 
                                             return 1;
-                                        })))))));
+                                        })))).requires((source -> source.hasPermissionLevel(2))))));
 
     }
 
