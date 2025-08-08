@@ -1,18 +1,19 @@
 package com.soulbind.mixin;
 
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.soulbind.SoulBind;
 import com.soulbind.util.ModUtils;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +47,50 @@ public abstract class ServerPlayerEntityMixin {
                 this.dropItem(new ItemStack(Items.MACE), false, false);
             }
         }
+    }
 
+    @WrapOperation(method = "copyFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
+    private boolean copyFromMixin(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original) {
+        ServerPlayerEntity player = (ServerPlayerEntity)(Object)this;
+
+        if (!ModUtils.readPlayerName(player).equals("")) {
+            return true;
+        }
+
+        return instance.getBoolean(rule);
+    }
+
+
+    // 2) after vanilla's copyFrom runs, copy items from old player -> new player if soulmate
+    @Inject(method = "copyFrom", at = @At("TAIL"))
+    private void copyInventoryAfterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+        ServerPlayerEntity newPlayer = (ServerPlayerEntity) (Object) this;
+
+        // only apply soulmate keep-inv behavior
+        if (ModUtils.readPlayerName(oldPlayer).equals("")) return;
+
+        PlayerInventory oldInv = oldPlayer.getInventory();
+        PlayerInventory newInv = newPlayer.getInventory();
+
+        // copy every slot (hotbar, main, armor, offhand — PlayerInventory.size() covers them)
+        for (int i = 0; i < oldInv.size(); i++) {
+            ItemStack stack = oldInv.getStack(i);
+
+            if (!stack.isOf(Items.MACE)) {
+                newInv.setStack(i, stack.isEmpty() ? ItemStack.EMPTY : stack.copy());
+            }
+        }
+
+        // mark dirty and sync to client
+        newInv.markDirty();
+
+        // ensure client sees the new inventory immediately
+        // use whichever field/getter your mappings expose; playerScreenHandler/currentScreenHandler both are common
+        try {
+            newPlayer.playerScreenHandler.sendContentUpdates();
+        } catch (NoSuchFieldError e) {
+            // fallback if your mappings use a different name; you can also call newPlayer.currentScreenHandler.sendContentUpdates()
+        }
     }
 
 }

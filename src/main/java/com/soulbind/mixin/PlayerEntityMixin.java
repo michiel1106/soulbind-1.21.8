@@ -17,6 +17,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -63,17 +64,15 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	}
 
 
-	@WrapOperation(method = "dropInventory", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
-	private boolean dropInventoryMixin(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original) {
-
-		PlayerEntity player = (PlayerEntity)(Object)this;
-
-		if (!ModUtils.readPlayerName(player).equals("")) {
-			return true;
+	// 1) prevent vanilla dropping for soulmate players
+	@Inject(method = "dropInventory", at = @At("HEAD"), cancellable = true)
+	private void preventDrops(CallbackInfo ci) {
+		PlayerEntity self = (PlayerEntity) (Object) this;
+		if (!ModUtils.readPlayerName(self).equals("")) {
+			ci.cancel(); // don't drop items
 		}
-
-		return instance.getBoolean(rule);
 	}
+
 
 	@WrapOperation(method = "getExperienceToDrop", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Lnet/minecraft/world/GameRules$Key;)Z"))
 	private boolean experienceDropMixin(GameRules instance, GameRules.Key<GameRules.BooleanRule> rule, Operation<Boolean> original) {
@@ -122,6 +121,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		}
 
 	}
+
+
+
 
 
 
