@@ -49,13 +49,12 @@ public abstract class CrafterBlockMixin extends BlockWithEntity {
 
                     if (path.equals("mace")) {
 
-                        MaceHandler.maceCrafted();
 
-                        if (MaceHandler.MaceActive) {
-                        ci.cancel();
 
+                        if (MaceHandler.maceActive) {
+                            ci.cancel();
                         }
-
+                        MaceHandler.maceCrafted();
                     }
 
             }

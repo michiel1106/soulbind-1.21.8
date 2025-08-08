@@ -29,12 +29,13 @@ public abstract class PlayerScreenHandlerMixin {
         if (slot instanceof CraftingResultSlot) {
             ItemStack stack = slot.getStack();
             if (stack.getItem() instanceof MaceItem) {
-                MaceHandler.maceCrafted();
-                if (MaceHandler.MaceActive) {
+
+                if (MaceHandler.maceActive) {
                     System.out.println("Prevent quick-moving of MaceItem from crafting output.");
                     cir.setReturnValue(ItemStack.EMPTY);
                     cir.cancel();
                 }
+                MaceHandler.maceCrafted();
             }
         }
     }

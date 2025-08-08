@@ -26,11 +26,13 @@ public abstract class ResultSlotMixin extends Slot {
     private void takeStack(int amount, CallbackInfoReturnable<ItemStack> cir) {
         if (this.getStack() != null) {
             if (this.getStack().getItem() instanceof MaceItem) {
-                if (MaceHandler.MaceActive) {
+
+                if (MaceHandler.maceActive) {
                     System.out.println("tried to craft mace item. canceling");
                     cir.setReturnValue(ItemStack.EMPTY);
                     cir.cancel();
                 }
+                MaceHandler.maceCrafted();
             }
         }
     }
@@ -40,12 +42,13 @@ public abstract class ResultSlotMixin extends Slot {
     private void stack(ItemStack stack, int amount, CallbackInfo cir) {
         if (this.getStack() != null) {
             if (this.getStack().getItem() instanceof MaceItem) {
-                MaceHandler.maceCrafted();
-                if (MaceHandler.MaceActive) {
+
+                if (MaceHandler.maceActive) {
                     System.out.println("tried to craft mace item. canceling");
                     this.setStack(ItemStack.EMPTY);
                     cir.cancel();
                 }
+                MaceHandler.maceCrafted();
             }
         }
     }
