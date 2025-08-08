@@ -47,6 +47,9 @@ public class SoulBind implements ModInitializer {
 	public void onInitialize() {
 
 
+
+
+
 		CommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess, registrationEnvironment) -> commandDispatcher.register(CommandManager.literal("damagesoul")
 				.executes(commandContext -> {
 					commandContext.getSource().getPlayer().damage(commandContext.getSource().getWorld(), of(commandContext.getSource().getWorld(), SOULMATELESS), 1000f);
@@ -84,6 +87,8 @@ public class SoulBind implements ModInitializer {
 
 
 		}));
+
+
 
 
 

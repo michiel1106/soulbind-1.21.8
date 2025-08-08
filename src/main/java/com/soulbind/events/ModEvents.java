@@ -4,6 +4,7 @@ import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityData;
 import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.dataattachements.ModDataAttachments;
+import com.soulbind.macehandler.MaceHandler;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -70,6 +71,9 @@ public class ModEvents {
             return ActionResult.PASS;
         }));
 
+
+
+        ServerTickEvents.START_SERVER_TICK.register(MaceHandler::Tick);
 
 
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(((serverWorld, player, livingEntity) -> {

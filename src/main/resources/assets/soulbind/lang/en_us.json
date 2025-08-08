@@ -1,3 +1,4 @@
 {
-  "item.soulbind.soul_token": "Soul Token"
+  "item.soulbind.soul_token": "Soul Token",
+  "death.attack.soulmateless": "%1$s could not live without their soulmate."
 }

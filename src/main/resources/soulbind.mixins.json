@@ -3,8 +3,12 @@
   "package": "com.soulbind.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "CrafterBlockMixin",
+    "CraftingTableScreenHandlermixin",
     "LivingEntityMixin",
     "PlayerEntityMixin",
+    "PlayerScreenHandlerMixin",
+    "ResultSlotMixin",
     "ServerPlayerEntityMixin"
   ],
   "injectors": {
