@@ -7,9 +7,7 @@ import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.events.ModEvents;
 import com.soulbind.items.ModItems;
 import com.soulbind.items.SoulToken;
-import com.soulbind.packets.ActivatePrimaryC2S;
-import com.soulbind.packets.ActivateSecondaryC2S;
-import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
+import com.soulbind.packets.*;
 import com.soulbind.util.ModUtils;
 import net.fabricmc.api.ModInitializer;
 
@@ -21,6 +19,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.MaceItem;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -69,8 +68,20 @@ public class SoulBind implements ModInitializer {
 
 
 		PayloadTypeRegistry.playS2C().register(ClientBoundOpenRequestSoulmateScreen.ID, ClientBoundOpenRequestSoulmateScreen.CODEC);
+		PayloadTypeRegistry.playS2C().register(SoulmateInvitePacketS2C.ID, SoulmateInvitePacketS2C.CODEC);
+
 		PayloadTypeRegistry.playC2S().register(ActivatePrimaryC2S.ID, ActivatePrimaryC2S.CODEC);
 		PayloadTypeRegistry.playC2S().register(ActivateSecondaryC2S.ID, ActivateSecondaryC2S.CODEC);
+		PayloadTypeRegistry.playC2S().register(SoulmateInvitePacketC2S.ID, SoulmateInvitePacketC2S.CODEC);
+
+
+		ServerPlayNetworking.registerGlobalReceiver(SoulmateInvitePacketC2S.ID, ((soulmateInvitePacketC2S, context) -> {
+			String player1 = soulmateInvitePacketC2S.player();
+			String ability = soulmateInvitePacketC2S.ability();
+			CustomPayload payload = new SoulmateInvitePacketS2C(player1, ability);
+			ServerPlayNetworking.send(context.server().getPlayerManager().getPlayer(player1), payload);
+		}));
+
 
 
 		ServerPlayNetworking.registerGlobalReceiver(ActivatePrimaryC2S.ID, ((payload, context) ->  {

@@ -4,6 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.soulbind.packets.ActivatePrimaryC2S;
 import com.soulbind.packets.ActivateSecondaryC2S;
 import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
+import com.soulbind.packets.SoulmateInvitePacketS2C;
 import com.soulbind.screens.AbilitySelectScreen;
 import com.soulbind.screens.OriginDisplayScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,6 +17,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -55,24 +57,27 @@ public class SoulBindClient implements ClientModInitializer {
 
 		}));
 
-		ClientCommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess) -> commandDispatcher.register((ClientCommandManager.literal("openscreen").executes(commandContext -> {
-			MinecraftClient.getInstance().execute(() -> {
-				List<String> stringList = new ArrayList<>();
 
-
-
-				MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
-			});
-			return 1;
-		})))));
 
 		ClientPlayNetworking.registerGlobalReceiver(ClientBoundOpenRequestSoulmateScreen.ID, (payload, context) -> {
 
-			List<String> stringList = new ArrayList<>();
-			stringList.add("test_ability");
 
-			MinecraftClient.getInstance().setScreen(new AbilitySelectScreen(Text.empty(), stringList));
+			List<String> stringList = payload.stringList();
+
+			stringList.removeIf((string -> string.equals(MinecraftClient.getInstance().player.getName().getString())));
+
+			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
 		});
+
+
+		ClientPlayNetworking.registerGlobalReceiver(SoulmateInvitePacketS2C.ID, ((payload, context) -> {
+
+			MutableText literal = Text.literal(payload.player() + " has requested you to become their soulmate with their chosen ability being: " + payload.ability());
+
+
+			MinecraftClient.getInstance().player.sendMessage(literal, false);
+
+		}));
 
 
 		// probably dont have to touch this but I enabled this just in case.

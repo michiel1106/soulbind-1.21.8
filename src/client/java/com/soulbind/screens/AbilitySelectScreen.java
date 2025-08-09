@@ -3,13 +3,16 @@ package com.soulbind.screens;
 import com.soulbind.SoulBind;
 import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityType;
+import com.soulbind.packets.SoulmateInvitePacketC2S;
 import com.soulbind.util.ModUtils;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -32,6 +35,8 @@ public class AbilitySelectScreen extends Screen{
     protected static final int WINDOW_WIDTH = 176;
     protected static final int WINDOW_HEIGHT = 182;
 
+
+    private String playername;
     protected final boolean showDirtBackground;
 
     // --- Your entries to display ---
@@ -46,19 +51,21 @@ public class AbilitySelectScreen extends Screen{
     private int selectedIndex = -1;
 
 
+
     protected int guiTop, guiLeft;
     private ButtonWidget confirmButton;
     // Constants for entry rendering
     private static final int ENTRY_HEIGHT = 70;
-    private static final int VISIBLE_ENTRIES = 3;
+    private static final int VISIBLE_ENTRIES = 2;
     private static final int ENTRY_START_Y = 20;
     private static final int ENTRY_X = 20;
     private static final int ENTRY_WIDTH = WINDOW_WIDTH - 40;
 
-    public AbilitySelectScreen(Text title, List<String> abilityEntries) {
+    public AbilitySelectScreen(Text title, List<String> abilityEntries, String playername) {
         super(title);
         this.abilityEntries = abilityEntries;
         this.showDirtBackground = false;
+        this.playername = playername;
     }
 
     @Override
@@ -85,7 +92,10 @@ public class AbilitySelectScreen extends Screen{
                 if (abilityType != null) {
                     Ability abilityInstance = abilityType.createInstance();
                     // Now you have the current Ability instance, do whatever you want
-                    System.out.println("Selected ability: " + abilityInstance.getName());
+                    CustomPayload customPayload = new SoulmateInvitePacketC2S(playername, abilityInstance.getName());
+
+                    ClientPlayNetworking.send(customPayload);
+
                     // Example: your code here
                 }
 
@@ -239,9 +249,6 @@ public class AbilitySelectScreen extends Screen{
                         this.selectedIndex = clickedIndex;
                         this.confirmButton.active = true;
                         // Optional: play click sound here
-                        return true;
-                    } else if (button == 1) { // Right click = open detail screen (optional)
-                        this.client.setScreen(new OriginDisplayScreen.EntryDetailScreen(Text.literal(abilityEntries.get(clickedIndex)), this));
                         return true;
                     }
                 }

@@ -2,6 +2,7 @@ package com.soulbind.abilities.importantforregistering;
 
 import com.mojang.serialization.Codec;
 import com.soulbind.abilities.Ability;
+import com.soulbind.abilities.PoisonAbility;
 import com.soulbind.abilities.testabilities.EmptyAbility;
 import com.soulbind.abilities.testabilities.TestAbility;
 import net.minecraft.util.StringIdentifiable;
@@ -10,7 +11,8 @@ import java.util.function.Supplier;
 
 public enum AbilityType implements StringIdentifiable {
     TEST_ABILITY("test_ability", TestAbility::new),
-    EMPTY_ABILITY("empty", EmptyAbility::new);
+    EMPTY_ABILITY("empty", EmptyAbility::new),
+    POISON("poison", PoisonAbility::new);
 
 
 

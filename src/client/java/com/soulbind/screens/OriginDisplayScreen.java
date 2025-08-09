@@ -3,6 +3,7 @@ package com.soulbind.screens;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.soulbind.SoulBind;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -19,13 +20,11 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 public class OriginDisplayScreen extends Screen {
     private static final Identifier WINDOW_BACKGROUND = SoulBind.identifier("choose_origin/background");
@@ -245,7 +244,13 @@ public class OriginDisplayScreen extends Screen {
                 int clickedIndex = relativeY / ENTRY_HEIGHT;
                 if (clickedIndex >= 0 && clickedIndex < entries.size()) {
                     // Open new screen for that entry
-                    this.client.setScreen(new EntryDetailScreen(Text.literal(entries.get(clickedIndex)), this));
+
+                    List<String> stringStream = Arrays.stream(AbilityType.values()).map(AbilityType::asString).toList();
+
+                    if (this.client != null) {
+                        this.client.setScreen(new AbilitySelectScreen(Text.empty(), stringStream, entries.get(clickedIndex)));
+                    }
+
                     return true;
                 }
             }
