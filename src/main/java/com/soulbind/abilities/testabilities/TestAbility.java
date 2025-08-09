@@ -13,6 +13,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestAbility extends Ability {
@@ -33,11 +34,17 @@ public class TestAbility extends Ability {
     }
 
     public List<OrderedText> getDescription() {
-        List<OrderedText> orderedTexts = List.of();
+        List<OrderedText> orderedTexts = new ArrayList<>();
 
-        orderedTexts.add(Text.literal("Test ability is a cool ability").asOrderedText());
+        orderedTexts.add(Text.literal("Test ability is a").asOrderedText());
+        orderedTexts.add(Text.literal("cool ability").asOrderedText());
         orderedTexts.add(Text.literal("If this isnt a dev env").asOrderedText());
-        orderedTexts.add(Text.literal("You shouldnt be able to see this.").asOrderedText());
+        orderedTexts.add(Text.literal("You shouldnt be able").asOrderedText());
+        orderedTexts.add(Text.literal("to see this.").asOrderedText());
+
+        orderedTexts.size();
+
+
 
         return orderedTexts;
     }

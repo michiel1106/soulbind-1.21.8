@@ -1,6 +1,5 @@
 package com.soulbind.screens;
 
-import com.mojang.authlib.GameProfile;
 import com.soulbind.SoulBind;
 import com.soulbind.abilities.Ability;
 import com.soulbind.abilities.importantforregistering.AbilityType;
@@ -11,17 +10,13 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix3x2f;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class AbilitySelectScreen extends Screen{
@@ -48,13 +43,14 @@ public class AbilitySelectScreen extends Screen{
     private boolean dragScrolling = false;
     private double mouseDragStart = 0;
     private int scrollDragStart = 0;
+    private int selectedIndex = -1;
 
 
     protected int guiTop, guiLeft;
-
+    private ButtonWidget confirmButton;
     // Constants for entry rendering
-    private static final int ENTRY_HEIGHT = 30;
-    private static final int VISIBLE_ENTRIES = 4;
+    private static final int ENTRY_HEIGHT = 70;
+    private static final int VISIBLE_ENTRIES = 3;
     private static final int ENTRY_START_Y = 20;
     private static final int ENTRY_X = 20;
     private static final int ENTRY_WIDTH = WINDOW_WIDTH - 40;
@@ -71,11 +67,36 @@ public class AbilitySelectScreen extends Screen{
         this.guiLeft = (this.width - WINDOW_WIDTH) / 2;
         this.guiTop = (this.height - WINDOW_HEIGHT) / 2;
 
-
-
         int totalHeight = abilityEntries.size() * ENTRY_HEIGHT;
         int visibleHeight = VISIBLE_ENTRIES * ENTRY_HEIGHT;
         this.currentMaxScroll = Math.max(0, totalHeight - visibleHeight);
+
+        // Add Confirm button
+        int buttonWidth = 100;
+        int buttonHeight = 20;
+        int buttonX = this.width / 2 - buttonWidth / 2;
+        int buttonY = this.guiTop + WINDOW_HEIGHT + 10;
+
+        this.confirmButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Confirm"), (onpress) -> {
+            if (selectedIndex >= 0 && selectedIndex < abilityEntries.size()) {
+                String abilityId = abilityEntries.get(selectedIndex);
+                AbilityType abilityType = ModUtils.getAbilityTypeById(abilityId);
+
+                if (abilityType != null) {
+                    Ability abilityInstance = abilityType.createInstance();
+                    // Now you have the current Ability instance, do whatever you want
+                    System.out.println("Selected ability: " + abilityInstance.getName());
+                    // Example: your code here
+                }
+
+            }
+        }).dimensions(buttonX, buttonY, buttonWidth, buttonHeight).build());
+
+
+
+        this.confirmButton.active = false;
+
+        // You can also add a "Cancel" button or "Back" button as needed
     }
 
     @Override
@@ -94,10 +115,10 @@ public class AbilitySelectScreen extends Screen{
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-
         super.render(context, mouseX, mouseY, delta);
         renderOriginWindow(context, mouseX, mouseY, delta);
     }
+
 
     protected void renderOriginWindow(DrawContext context, int mouseX, int mouseY, float delta) {
         // Draw window background and border
@@ -112,7 +133,6 @@ public class AbilitySelectScreen extends Screen{
         int mouseRelX = mouseX - guiLeft;
         int mouseRelY = mouseY - guiTop;
 
-        // Render visible entries only
         int startEntryIndex = scrollPos / ENTRY_HEIGHT;
         int endEntryIndex = Math.min(abilityEntries.size(), startEntryIndex + VISIBLE_ENTRIES + 1);
 
@@ -122,23 +142,23 @@ public class AbilitySelectScreen extends Screen{
             boolean hovered = mouseRelX >= ENTRY_X && mouseRelX < ENTRY_X + ENTRY_WIDTH &&
                     mouseRelY >= entryY - guiTop && mouseRelY < entryY - guiTop + ENTRY_HEIGHT;
 
+            // Highlight hovered
             if (hovered) {
                 context.fill(guiLeft + ENTRY_X, entryY, guiLeft + ENTRY_X + ENTRY_WIDTH, entryY + ENTRY_HEIGHT, 0x88000000);
             }
 
+            // Highlight selected
+            if (i == selectedIndex) {
+                context.fill(guiLeft + ENTRY_X, entryY, guiLeft + ENTRY_X + ENTRY_WIDTH, entryY + ENTRY_HEIGHT, 0x88008888);
+            }
+
             String abilityEntry = abilityEntries.get(i);
-
-
             AbilityType abilityType = ModUtils.getAbilityTypeById(abilityEntry);
 
             Identifier image;
-
             if (abilityType != null) {
-
                 Ability instance = abilityType.createInstance();
                 image = instance.getImage();
-
-
             } else {
                 image = new Ability().getImage();
             }
@@ -147,38 +167,29 @@ public class AbilitySelectScreen extends Screen{
             int headX = guiLeft + ENTRY_X;
             int headY = entryY;
 
-            //context.drawTexture(RenderPipelines.GUI_TEXTURED, image, headX, headY, 0, 0, headSize, headSize, 64, 64);
             context.drawTexture(RenderPipelines.GUI_TEXTURED, image, headX, headY, 0, 0, 30, 30, 64, 64, 64, 64);
 
-            //  context.drawTexture(RenderPipelines.GUI_TEXTURED, image, headX, headY, 0, 0, headSize, headSize, 64, 64);
-
-
-            // Draw player name
-            int textX = headX + headSize + 5;
+            int textX = headX + headSize - 38;
             if (abilityType != null) {
                 Ability instance = abilityType.createInstance();
 
-                // Draw the name (single line)
                 context.drawText(
                         textRenderer,
-                        instance.getName().formatted(hovered ? Formatting.YELLOW : Formatting.WHITE),
+                        instance.getName().formatted(i == selectedIndex ? Formatting.GOLD : (hovered ? Formatting.YELLOW : Formatting.WHITE)),
                         textX,
-                        entryY, // top padding inside entry
+                        entryY,
                         0xFFFFFFFF,
                         false
                 );
 
-
-
-                // Draw each wrapped line under the name
-                int descY = entryY + 8; // start just under the name
+                int descY = entryY + 10;
                 for (OrderedText line : instance.getDescription()) {
                     context.drawText(textRenderer, line, textX, descY, 0xFFAAAAAA, false);
-                    descY += 8; // move down for the next line
+                    descY += 12;
                 }
             }
-
         }
+
         // Draw scrollbar
         renderScrollbar(context, mouseX, mouseY);
     }
@@ -216,17 +227,23 @@ public class AbilitySelectScreen extends Screen{
             }
         }
 
-        // Check if clicked on an entry
         int mouseRelX = (int) mouseX - guiLeft;
         int mouseRelY = (int) mouseY - guiTop;
+
         if (mouseRelX >= ENTRY_X && mouseRelX < ENTRY_X + ENTRY_WIDTH) {
             int relativeY = mouseRelY + scrollPos - ENTRY_START_Y;
             if (relativeY >= 0) {
                 int clickedIndex = relativeY / ENTRY_HEIGHT;
                 if (clickedIndex >= 0 && clickedIndex < abilityEntries.size()) {
-                    // Open new screen for that entry
-                    this.client.setScreen(new OriginDisplayScreen.EntryDetailScreen(Text.literal(abilityEntries.get(clickedIndex)), this));
-                    return true;
+                    if (button == 0) { // Left click = select entry
+                        this.selectedIndex = clickedIndex;
+                        this.confirmButton.active = true;
+                        // Optional: play click sound here
+                        return true;
+                    } else if (button == 1) { // Right click = open detail screen (optional)
+                        this.client.setScreen(new OriginDisplayScreen.EntryDetailScreen(Text.literal(abilityEntries.get(clickedIndex)), this));
+                        return true;
+                    }
                 }
             }
         }

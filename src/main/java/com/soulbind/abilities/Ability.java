@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("DataFlowIssue")
@@ -33,7 +34,7 @@ public class Ability {
     }
 
     public List<OrderedText> getDescription() {
-        List<OrderedText> orderedTexts = List.of();
+        List<OrderedText> orderedTexts = new ArrayList<>();
 
         orderedTexts.add(Text.literal("This is an example ordered description").asOrderedText());
         orderedTexts.add(Text.literal("The description must be very short").asOrderedText());
