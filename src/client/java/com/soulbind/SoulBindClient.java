@@ -55,15 +55,16 @@ public class SoulBindClient implements ClientModInitializer {
 		}));
 
 		ClientCommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess) -> commandDispatcher.register((ClientCommandManager.literal("openscreen").executes(commandContext -> {
-			List<String> stringList = new ArrayList<>();
+			MinecraftClient.getInstance().execute(() -> {
+				List<String> stringList = new ArrayList<>();
 
-			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.literal(""), stringList));
+				MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
+			});
 			return 1;
 		})))));
 
 		ClientPlayNetworking.registerGlobalReceiver(ClientBoundOpenRequestSoulmateScreen.ID, (payload, context) -> {
 
-			System.out.println(payload.stringList());
 			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), payload.stringList()));
 		});
 
