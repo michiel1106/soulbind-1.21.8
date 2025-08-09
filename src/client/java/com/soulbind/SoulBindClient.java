@@ -4,6 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.soulbind.packets.ActivatePrimaryC2S;
 import com.soulbind.packets.ActivateSecondaryC2S;
 import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
+import com.soulbind.screens.AbilitySelectScreen;
 import com.soulbind.screens.OriginDisplayScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -29,17 +30,17 @@ public class SoulBindClient implements ClientModInitializer {
 	public void onInitializeClient() {
 
 		primary = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"key.soulbind.primary", // The translation key of the keybinding's name
-				InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-				GLFW.GLFW_KEY_G, // The keycode of the key
-				"Soulbind" // The translation key of the keybinding's category.
+				"key.soulbind.primary",
+				InputUtil.Type.KEYSYM,
+				GLFW.GLFW_KEY_G,
+				"Soulbind"
 		));
 
 		secondary = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"key.soulbind.secondary", // The translation key of the keybinding's name
-				InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-				GLFW.GLFW_KEY_R, // The keycode of the key
-				"Soulbind" // The translation key of the keybinding's category.
+				"key.soulbind.secondary",
+				InputUtil.Type.KEYSYM,
+				GLFW.GLFW_KEY_R,
+				"Soulbind"
 		));
 
 
@@ -58,6 +59,8 @@ public class SoulBindClient implements ClientModInitializer {
 			MinecraftClient.getInstance().execute(() -> {
 				List<String> stringList = new ArrayList<>();
 
+
+
 				MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
 			});
 			return 1;
@@ -65,7 +68,10 @@ public class SoulBindClient implements ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(ClientBoundOpenRequestSoulmateScreen.ID, (payload, context) -> {
 
-			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), payload.stringList()));
+			List<String> stringList = new ArrayList<>();
+			stringList.add("test_ability");
+
+			MinecraftClient.getInstance().setScreen(new AbilitySelectScreen(Text.empty(), stringList));
 		});
 
 

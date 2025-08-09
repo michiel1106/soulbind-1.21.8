@@ -127,6 +127,15 @@ public class ModUtils {
 
     }
 
+    public static AbilityType getAbilityTypeById(String id) {
+        for (AbilityType type : AbilityType.values()) {
+            if (type.asString().equals(id)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
 
 
 }

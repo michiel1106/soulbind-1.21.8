@@ -1,5 +1,6 @@
 package com.soulbind.abilities;
 
+import com.soulbind.SoulBind;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -7,7 +8,12 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @SuppressWarnings("DataFlowIssue")
 public class Ability {
@@ -17,6 +23,24 @@ public class Ability {
     public PlayerEntity mainPlayer;
     public ServerWorld world;
 
+
+    public Identifier getImage() {
+        return SoulBind.identifier("ability_images/placeholder.png");
+    }
+
+    public String getName() {
+        return "placeholder";
+    }
+
+    public List<OrderedText> getDescription() {
+        List<OrderedText> orderedTexts = List.of();
+
+        orderedTexts.add(Text.literal("This is an example ordered description").asOrderedText());
+        orderedTexts.add(Text.literal("The description must be very short").asOrderedText());
+        orderedTexts.add(Text.literal("As there isnt a lot of space on the screen").asOrderedText());
+
+        return orderedTexts;
+    }
 
     public void usePrimary(PlayerEntity player, ServerWorld world) {
     }
@@ -29,8 +53,6 @@ public class Ability {
         this.soulmate = soulmate;
         this.mainPlayer = player;
         this.world = world;
-
-
 
 
     }

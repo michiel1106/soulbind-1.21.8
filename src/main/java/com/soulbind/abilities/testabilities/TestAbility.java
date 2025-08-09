@@ -1,5 +1,6 @@
 package com.soulbind.abilities.testabilities;
 
+import com.soulbind.SoulBind;
 import com.soulbind.abilities.Ability;
 import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
@@ -8,12 +9,37 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public class TestAbility extends Ability {
     @Override
     public void Tick(PlayerEntity player, ServerWorld world, PlayerEntity soulmate) {
         super.Tick(player, world, soulmate);
         //       System.out.println("ticked!");
+    }
+
+    @Override
+    public Identifier getImage() {
+        return SoulBind.identifier("ability_images/test_ability.png");
+    }
+
+    @Override
+    public String getName() {
+        return "Test Ability";
+    }
+
+    public List<OrderedText> getDescription() {
+        List<OrderedText> orderedTexts = List.of();
+
+        orderedTexts.add(Text.literal("Test ability is a cool ability").asOrderedText());
+        orderedTexts.add(Text.literal("If this isnt a dev env").asOrderedText());
+        orderedTexts.add(Text.literal("You shouldnt be able to see this.").asOrderedText());
+
+        return orderedTexts;
     }
 
     @Override
