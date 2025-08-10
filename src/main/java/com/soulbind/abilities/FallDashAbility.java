@@ -1,11 +1,7 @@
 package com.soulbind.abilities;
 
 import com.soulbind.SoulBind;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.registry.tag.DamageTypeTags;
@@ -19,12 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class FallDashAbility extends Ability{
     private int cooldown = 0;
 
-    Random random = new Random();
     @Override
     public List<OrderedText> getDescription() {
         List<OrderedText> orderedTexts = new ArrayList<>();
@@ -49,18 +43,24 @@ public class FallDashAbility extends Ability{
     public void Tick(PlayerEntity player, ServerWorld world, @Nullable PlayerEntity soulmate) {
         super.Tick(player, world, soulmate);
 
-        if (cooldown != 0) {
-            cooldown--;
+
+        if (cooldown == 0) {
+            return;
         }
+
+        cooldown--;
     }
 
     @Override
     public void usePrimary(PlayerEntity player, ServerWorld world) {
 
-        if (cooldown != 0) {
-            dashPlayer(player, 3);
+        System.out.println(cooldown);
+
+        if (cooldown == 0) {
+            dashPlayer(player, 3.5f);
+            cooldown = 50;
         }
-        cooldown = 100;
+
 
         super.usePrimary(player, world);
     }
@@ -89,8 +89,7 @@ public class FallDashAbility extends Ability{
         player.velocityModified = true;
 
         // on a dedicated server you will normally want to sync to the client:
-        if (player instanceof ServerPlayerEntity) {
-            ServerPlayerEntity sp = (ServerPlayerEntity) player;
+        if (player instanceof ServerPlayerEntity sp) {
 
             EntityVelocityUpdateS2CPacket packet = new EntityVelocityUpdateS2CPacket(player);
 

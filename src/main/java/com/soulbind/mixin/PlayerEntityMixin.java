@@ -54,7 +54,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 			if (data != null) {
 				if (player instanceof PlayerEntity playerEntity) {
 					AbilityType type = data.type();
-					Ability ability = type.createInstance();
+					Ability ability = ModUtils.getAbility(playerEntity);
 					ability.onHit(playerEntity, getTarget(), amount/10.0F);
 				}
 			}

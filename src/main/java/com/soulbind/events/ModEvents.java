@@ -84,7 +84,10 @@ public class ModEvents {
                 if (data != null) {
                     AbilityType type = data.type();
 
-                    Ability ability = type.createInstance();
+
+
+                    Ability ability = ModUtils.getAbility(player);
+
 
                     PlayerEntity soulmate = ModUtils.getSoulmate(player);
 
@@ -159,6 +162,7 @@ public class ModEvents {
 
 
 
+        ServerPlayerEvents.LEAVE.register((ModUtils::removeAbility));
 
 
         ServerPlayerEvents.JOIN.register((player -> {

@@ -6,6 +6,7 @@ import com.soulbind.abilities.FallDashAbility;
 import com.soulbind.abilities.PoisonAbility;
 import com.soulbind.abilities.testabilities.EmptyAbility;
 import com.soulbind.abilities.testabilities.TestAbility;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.StringIdentifiable;
 
 import java.util.function.Supplier;

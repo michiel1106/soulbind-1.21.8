@@ -18,11 +18,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.soulbind.dataattachements.ModDataAttachments.*;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ModUtils {
-
+    private static final Map<PlayerEntity, Ability> abilityCache = new HashMap<>();
 
 
     public static String getAbilityString(PlayerEntity player) {
@@ -37,8 +40,11 @@ public class ModUtils {
         player.setAttached(ModDataAttachments.PLAYER_ABILITY, abilityData);
     }
 
+
     public static void removeAbility(PlayerEntity player) {
         AbilityData abilityData = new AbilityData(AbilityType.EMPTY_ABILITY);
+
+        abilityCache.remove(player);
 
         player.setAttached(ModDataAttachments.PLAYER_ABILITY, abilityData);
     }
@@ -83,11 +89,17 @@ public class ModUtils {
     }
 
     public static Ability getAbility(PlayerEntity player) {
+        if (abilityCache.containsKey(player)) {
+            return abilityCache.get(player);
+        }
+
         AbilityData data = player.getAttached(ModDataAttachments.PLAYER_ABILITY);
         if (data != null) {
             AbilityType type = data.type();
+            Ability ability = type.createInstance();
 
-            return type.createInstance();
+            abilityCache.put(player, ability);
+            return ability;
         }
         return null;
     }
