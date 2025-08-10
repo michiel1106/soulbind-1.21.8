@@ -102,7 +102,7 @@ public class SoulBindClient implements ClientModInitializer {
 
 			List<String> stringList = payload.stringList();
 
-		//	stringList.removeIf((string -> string.equals(MinecraftClient.getInstance().player.getName().getString())));
+			stringList.removeIf((string -> string.equals(MinecraftClient.getInstance().player.getName().getString())));
 
 			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
 		});

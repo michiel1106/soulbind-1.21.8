@@ -20,7 +20,7 @@ public class TestAbility extends Ability {
     @Override
     public void Tick(PlayerEntity player, ServerWorld world, PlayerEntity soulmate) {
         super.Tick(player, world, soulmate);
-        //       System.out.println("ticked!");
+
     }
 
     @Override

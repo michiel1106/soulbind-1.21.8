@@ -55,8 +55,8 @@ public class AbilitySelectScreen extends Screen{
     protected int guiTop, guiLeft;
     private ButtonWidget confirmButton;
     // Constants for entry rendering
-    private static final int ENTRY_HEIGHT = 70;
-    private static final int VISIBLE_ENTRIES = 1;
+    private static final int ENTRY_HEIGHT = 40;
+    private static final int VISIBLE_ENTRIES = 2;
     private static final int ENTRY_START_Y = 20;
     private static final int ENTRY_X = 20;
     private static final int ENTRY_WIDTH = WINDOW_WIDTH - 40;
@@ -92,7 +92,7 @@ public class AbilitySelectScreen extends Screen{
                 if (abilityType != null) {
                     Ability abilityInstance = abilityType.createInstance();
                     // Now you have the current Ability instance, do whatever you want
-                    CustomPayload customPayload = new SoulmateInvitePacketC2S(playername, abilityInstance.getName());
+                    CustomPayload customPayload = new SoulmateInvitePacketC2S(playername, abilityInstance.getId());
 
                     ClientPlayNetworking.send(customPayload);
 
@@ -166,7 +166,7 @@ public class AbilitySelectScreen extends Screen{
 
             // Highlight selected
             if (i == selectedIndex) {
-                context.fill(guiLeft + ENTRY_X, entryY, guiLeft + ENTRY_X + ENTRY_WIDTH, entryY + ENTRY_HEIGHT, 0x88008888);
+                context.fill(guiLeft + ENTRY_X, entryY, guiLeft + ENTRY_X + ENTRY_WIDTH, entryY + ENTRY_HEIGHT, 0x88000000);
             }
 
             String abilityEntry = abilityEntries.get(i);
@@ -186,7 +186,7 @@ public class AbilitySelectScreen extends Screen{
 
             context.drawTexture(RenderPipelines.GUI_TEXTURED, image, headX, headY, 0, 0, 30, 30, 64, 64, 64, 64);
 
-            int textX = headX + headSize - 38;
+            int textX = headX + headSize - 8;
             if (abilityType != null) {
                 Ability instance = abilityType.createInstance();
 
@@ -199,7 +199,7 @@ public class AbilitySelectScreen extends Screen{
                         false
                 );
 
-                int descY = entryY + 10;
+                int descY = entryY + 9;
                 for (OrderedText line : instance.getDescription()) {
                     context.drawText(textRenderer, line, textX, descY, 0xFFAAAAAA, false);
                     descY += 12;

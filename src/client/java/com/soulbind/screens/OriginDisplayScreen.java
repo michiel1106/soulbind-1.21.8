@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class OriginDisplayScreen extends Screen {
@@ -245,7 +246,16 @@ public class OriginDisplayScreen extends Screen {
                 if (clickedIndex >= 0 && clickedIndex < entries.size()) {
                     // Open new screen for that entry
 
-                    List<String> stringStream = Arrays.stream(AbilityType.values()).map(AbilityType::asString).toList();
+
+                    List<String> stringStream = Arrays.stream(AbilityType.values()).map(AbilityType::asString)
+                            .collect(Collectors.toCollection(ArrayList::new));
+
+                    stringStream.removeIf((string -> {
+                        if (string.equals("test_ability") || string.equals("empty")) {
+                            return true;
+                        }
+                        return false;
+                    }));
 
                     if (this.client != null) {
                         this.client.setScreen(new AbilitySelectScreen(Text.empty(), stringStream, entries.get(clickedIndex)));

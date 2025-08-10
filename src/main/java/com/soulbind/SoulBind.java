@@ -1,7 +1,7 @@
 package com.soulbind;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.soulbind.abilities.Ability;
+import com.soulbind.abilities.importantforregistering.AbilityType;
 import com.soulbind.commands.ModCommands;
 import com.soulbind.dataattachements.ModDataAttachments;
 import com.soulbind.events.ModEvents;
@@ -12,7 +12,6 @@ import com.soulbind.util.ModUtils;
 import com.soulbind.util.SoulRequest;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -20,14 +19,10 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.MaceItem;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -36,9 +31,7 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -93,7 +86,7 @@ public class SoulBind implements ModInitializer {
 			String player1 = soulmateInvitePacketC2S.player();
 			String ability = soulmateInvitePacketC2S.ability();
 
-			SoulRequest soulRequest = new SoulRequest(context.player().getName().getString(), player1);
+			SoulRequest soulRequest = new SoulRequest(context.player().getName().getString(), player1, ability);
 
 			soulRequests.put(soulRequest.getRandomID(), soulRequest);
 
@@ -132,6 +125,21 @@ public class SoulBind implements ModInitializer {
 					if (receivingPlayerObj != null && requestingPlayerObj != null) {
 						ModUtils.writePlayerName(requestingPlayerObj, receivingPlayer);
 						ModUtils.writePlayerName(receivingPlayerObj, requestingPlayer);
+
+						String ability = soulRequest.getAbility();
+
+						AbilityType abilityTypeById = ModUtils.getAbilityTypeById(ability);
+						System.out.println(ability);
+
+						if (abilityTypeById == null) {
+							receivingPlayerObj.sendMessage(Text.literal("The ability type is invalid, please try again"), false);
+							requestingPlayerObj.sendMessage(Text.literal("The ability type is invalid, please try again"), false);
+							return;
+						}
+
+						ModUtils.giveAbilityToPlayer(receivingPlayerObj, abilityTypeById);
+						ModUtils.giveAbilityToPlayer(requestingPlayerObj, abilityTypeById);
+
 						soulRequests.remove(i);
 
 						receivingPlayerObj.sendMessage(Text.literal("Accepted " + requestingPlayer + " their soulmate request!"), false);

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "soul_bind:item/soul_token"
+    "model": "soulbind:item/soul_token"
   }
 }

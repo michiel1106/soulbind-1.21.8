@@ -2,6 +2,7 @@ package com.soulbind.abilities.importantforregistering;
 
 import com.mojang.serialization.Codec;
 import com.soulbind.abilities.Ability;
+import com.soulbind.abilities.FallDashAbility;
 import com.soulbind.abilities.PoisonAbility;
 import com.soulbind.abilities.testabilities.EmptyAbility;
 import com.soulbind.abilities.testabilities.TestAbility;
@@ -12,7 +13,8 @@ import java.util.function.Supplier;
 public enum AbilityType implements StringIdentifiable {
     TEST_ABILITY("test_ability", TestAbility::new),
     EMPTY_ABILITY("empty", EmptyAbility::new),
-    POISON("poison", PoisonAbility::new);
+    POISON("poison", PoisonAbility::new),
+    FALLDASH("falldash", FallDashAbility::new);
 
 
 

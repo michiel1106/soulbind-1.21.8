@@ -32,6 +32,11 @@ public class PoisonAbility extends Ability{
     }
 
     @Override
+    public String getId() {
+        return "poison";
+    }
+
+    @Override
     public Identifier getImage() {
         return SoulBind.identifier("poison.png");
     }

@@ -17,10 +17,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @SuppressWarnings("DataFlowIssue")
 public class Ability {
     // this is going to be the base ability. Other abilities will extend this class.
+
+    private Random random = new Random();
 
     public PlayerEntity soulmate;
     public PlayerEntity mainPlayer;
@@ -32,6 +35,10 @@ public class Ability {
     }
 
     public String getName() {
+        return "placeholder";
+    }
+
+    public String getId() {
         return "placeholder";
     }
 
@@ -62,10 +69,32 @@ public class Ability {
 
         PlayerEntity soulmate1 = ModUtils.getSoulmate(player);
 
-        float distance = player.distanceTo(soulmate);
+        float distance = player.distanceTo(soulmate1);
 
+
+
+        if (distance <= 1.5f) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 20, 0, true, false));
+        }
+        if (distance <= 4) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 20, 0, true, false));
+        }
         if (distance <= 7) {
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH));
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 20, 0, true, false));
+        }
+        if (distance >= 20) {
+            if (random.nextInt(2500) == 1) {
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 160, 0, true, false));
+            }
+            if (random.nextInt(2050) == 1) {
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, 0, true, false));
+            }
+
+            if (random.nextInt(2050) == 1) {
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 120, 0, true, false));
+            }
+
+
         }
 
 
