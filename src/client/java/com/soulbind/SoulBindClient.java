@@ -1,10 +1,9 @@
 package com.soulbind;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.soulbind.packets.ActivatePrimaryC2S;
-import com.soulbind.packets.ActivateSecondaryC2S;
-import com.soulbind.packets.ClientBoundOpenRequestSoulmateScreen;
-import com.soulbind.packets.SoulmateInvitePacketS2C;
+import com.soulbind.packets.*;
 import com.soulbind.screens.AbilitySelectScreen;
 import com.soulbind.screens.OriginDisplayScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,9 +15,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -30,6 +32,42 @@ public class SoulBindClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+
+
+
+		ClientCommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess) ->
+				commandDispatcher.register(ClientCommandManager.literal("soulmate")
+						.then(ClientCommandManager.literal("accept")
+								.then(ClientCommandManager.argument("playername", StringArgumentType.string())
+										.then(ClientCommandManager.argument("requestid", IntegerArgumentType.integer())
+												.executes((commandContext -> {
+
+													String string = StringArgumentType.getString(commandContext, "playername");
+
+													int requestid = IntegerArgumentType.getInteger(commandContext, "requestid");
+
+													CustomPayload payload = new SoulmateAcceptPacketC2S(string, requestid);
+
+													ClientPlayNetworking.send(payload);
+
+													return 1;
+												}))))))));
+
+		ClientCommandRegistrationCallback.EVENT.register(((commandDispatcher, commandRegistryAccess) ->
+				commandDispatcher.register(ClientCommandManager.literal("soulmate")
+						.then(ClientCommandManager.literal("deny")
+								.then(ClientCommandManager.argument("requestid", IntegerArgumentType.integer())
+										.executes(commandContext -> {
+
+											int requestid = IntegerArgumentType.getInteger(commandContext, "requestid");
+
+											SoulmateDenyPacketC2S soulmateDenyPacketC2S = new SoulmateDenyPacketC2S(requestid);
+
+											ClientPlayNetworking.send(soulmateDenyPacketC2S);
+
+
+											return 1;
+										}))))));
 
 		primary = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.soulbind.primary",
@@ -64,7 +102,7 @@ public class SoulBindClient implements ClientModInitializer {
 
 			List<String> stringList = payload.stringList();
 
-			stringList.removeIf((string -> string.equals(MinecraftClient.getInstance().player.getName().getString())));
+		//	stringList.removeIf((string -> string.equals(MinecraftClient.getInstance().player.getName().getString())));
 
 			MinecraftClient.getInstance().setScreen(new OriginDisplayScreen(Text.empty(), stringList));
 		});
@@ -72,10 +110,20 @@ public class SoulBindClient implements ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(SoulmateInvitePacketS2C.ID, ((payload, context) -> {
 
-			MutableText literal = Text.literal(payload.player() + " has requested you to become their soulmate with their chosen ability being: " + payload.ability());
+			System.out.println(payload.player() + " " + payload.requestid());
+
+			System.out.println("/soulmate accept " + payload.player() + " " + payload.requestid());
 
 
-			MinecraftClient.getInstance().player.sendMessage(literal, false);
+			Text message = Text.literal("") // 2 blank lines
+					.append(Text.literal(payload.player() + " has requested you to become their soulmate with their chosen ability being: " + payload.ability()))
+					.append("\n\n")
+					.append(Text.literal("[Accept]").styled(style -> style.withColor(Formatting.GREEN).withClickEvent(new ClickEvent.RunCommand("/soulmate accept " + payload.player() + " " + payload.requestid()))))
+					.append(Text.literal("     ")) // some space between buttons
+					.append(Text.literal("[Decline]").styled(style -> style.withColor(Formatting.RED).withClickEvent(new ClickEvent.RunCommand("/soulmate deny " + payload.requestid()))))
+					.append("\n\n");
+
+			MinecraftClient.getInstance().player.sendMessage(message, false);
 
 		}));
 

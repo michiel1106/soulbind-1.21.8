@@ -56,7 +56,7 @@ public class AbilitySelectScreen extends Screen{
     private ButtonWidget confirmButton;
     // Constants for entry rendering
     private static final int ENTRY_HEIGHT = 70;
-    private static final int VISIBLE_ENTRIES = 2;
+    private static final int VISIBLE_ENTRIES = 1;
     private static final int ENTRY_START_Y = 20;
     private static final int ENTRY_X = 20;
     private static final int ENTRY_WIDTH = WINDOW_WIDTH - 40;
@@ -138,6 +138,8 @@ public class AbilitySelectScreen extends Screen{
         // Draw title centered above window
         context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, guiTop - 15, 0xFFFFFF);
 
+
+
         // Draw entries (scrollable)
         int y = guiTop + ENTRY_START_Y - scrollPos;
         int mouseRelX = mouseX - guiLeft;
@@ -148,6 +150,11 @@ public class AbilitySelectScreen extends Screen{
 
         for (int i = startEntryIndex; i < endEntryIndex; i++) {
             int entryY = guiTop + ENTRY_START_Y + (i * ENTRY_HEIGHT) - scrollPos;
+
+            if (entryY + ENTRY_HEIGHT < guiTop || entryY > guiTop + WINDOW_HEIGHT) {
+                // Entry is completely above or below the window; skip rendering it
+                continue;
+            }
 
             boolean hovered = mouseRelX >= ENTRY_X && mouseRelX < ENTRY_X + ENTRY_WIDTH &&
                     mouseRelY >= entryY - guiTop && mouseRelY < entryY - guiTop + ENTRY_HEIGHT;

@@ -5,6 +5,8 @@ import com.soulbind.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -54,6 +56,18 @@ public class Ability {
         this.soulmate = soulmate;
         this.mainPlayer = player;
         this.world = world;
+
+        if (player == null) {return;}
+        if (ModUtils.getSoulmate(player) == null) {return;}
+
+        PlayerEntity soulmate1 = ModUtils.getSoulmate(player);
+
+        float distance = player.distanceTo(soulmate);
+
+        if (distance <= 7) {
+            player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH));
+        }
+
 
 
     }
